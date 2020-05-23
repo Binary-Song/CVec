@@ -1,87 +1,90 @@
 #ifndef VEC_H
 #define VEC_H
+
+#if __STDC_VERSION__ < 199901L //NOT C99
+#define inline
+#endif
+
 #include <stdlib.h>
+#include <string.h>
 #define INITIAL_CAPACITY 5
 #define GROWTH_RATE 2
 #define EMPTY_PREF
-#define DECL_VEC(vtype, type, prefix)                                                                                  \
-    typedef type (*vtype##_copy_t)(type obj);                                                                          \
-    typedef void (*vtype##_deinit_t)(type obj);                                                                        \
-    typedef struct vtype                                                                                               \
-    {                                                                                                                  \
-        type *array;                                                                                                   \
-        size_t size;                                                                                                   \
-        size_t capacity;                                                                                               \
-        vtype##_copy_t copy;                                                                                           \
-        vtype##_deinit_t deinit;                                                                                       \
-    } vtype;                                                                                                           \
-    typedef struct vtype##_iter                                                                                        \
-    {                                                                                                                  \
-        type *ptr;                                                                                                     \
-    } vtype##_iter;                                                                                                    \
-                                                                                                                       \
-    /*迭代器相关*/                                                                                                \
-    prefix vtype##_iter vtype##_begin(const vtype *v);                                                                 \
-    prefix vtype##_iter vtype##_end(const vtype *v);                                                                   \
-    prefix void vtype##_next(vtype##_iter *i);                                                                         \
-    prefix void vtype##_prev(vtype##_iter *i);                                                                         \
-    prefix type vtype##_deref(vtype##_iter i);                                                                         \
-    prefix int vtype##_eqi(vtype##_iter ia, vtype##_iter ib);                                                          \
-    /*vector相关*/                                                                                                   \
-    prefix vtype *vtype##_init(vtype##_copy_t, vtype##_deinit_t);                                                      \
-    prefix vtype *vtype##_init_by_array(const type *array, size_t size, vtype##_copy_t copy, vtype##_deinit_t deinit); \
-    prefix void vtype##_deinit(vtype *v);                                                                              \
-    prefix void vtype##_push_back(vtype *v, type obj);                                                                 \
-    prefix type vtype##_get(const vtype *v, size_t index);
+#define DECL_VEC(vtype, type, prefix)                                                                                   \
+    typedef type (*vtype##_copy_t)(type obj);                                                                           \
+    typedef void (*vtype##_deinit_t)(type obj);                                                                         \
+    typedef struct vtype                                                                                                \
+    {                                                                                                                   \
+        type *array;                                                                                                    \
+        size_t size;                                                                                                    \
+        size_t capacity;                                                                                                \
+        vtype##_copy_t copy;                                                                                            \
+        vtype##_deinit_t deinit;                                                                                        \
+    } vtype;                                                                                                            \
+    typedef type *vtype##_iter;                                                                                         \
+                                                                                                                        \
+    /*迭代器相关*/                                                                                                 \
+    prefix vtype##_iter vtype##_begin(const vtype *v);                                                                  \
+    prefix vtype##_iter vtype##_end(const vtype *v);                                                                    \
+    prefix vtype##_iter vtype##_next(vtype##_iter *i);                                                                          \
+    prefix vtype##_iter vtype##_prev(vtype##_iter *i);                                                                          \
+    prefix type vtype##_deref(vtype##_iter i);                                                                          \
+    prefix int vtype##_eqi(vtype##_iter ia, vtype##_iter ib);                                                           \
+    /*vector相关*/                                                                                                    \
+    prefix vtype *vtype##_init(vtype##_copy_t, vtype##_deinit_t);                                                       \
+    prefix vtype *vtype##_init_by_array(const type *array, size_t count, vtype##_copy_t copy, vtype##_deinit_t deinit); \
+    prefix void vtype##_deinit(vtype *v);                                                                               \
+    prefix void vtype##_push_back(vtype *v, type obj);                                                                  \
+    prefix type vtype##_get(const vtype *v, size_t index);                                                              \
+    prefix vtype##_iter vtype##_erase(vtype *v, vtype##_iter i);
 
-#define DEF_VEC(vtype, type, prefix)                                                                                  \
-    /* begin 取得头指针*/                                                                                        \
+#define DEF_VEC(vtype, type, prefix) /* begin 取得头指针*/                                                       \
     prefix vtype##_iter vtype##_begin(const vtype *v)                                                                 \
     {                                                                                                                 \
-        vtype##_iter iter;                                                                                            \
-        iter.ptr = v->array;                                                                                          \
-        return iter;                                                                                                  \
+        return v->array;                                                                                              \
     }                                                                                                                 \
     /* end 取得尾后指针*/                                                                                       \
     prefix vtype##_iter vtype##_end(const vtype *v)                                                                   \
     {                                                                                                                 \
-        vtype##_iter iter;                                                                                            \
-        iter.ptr = v->array + v->size;                                                                                \
-        return iter;                                                                                                  \
+        return v->array + v->size;                                                                                    \
     }                                                                                                                 \
     /* next 指针后移1*/                                                                                           \
-    prefix void vtype##_next(vtype##_iter *i)                                                                         \
+    prefix vtype##_iter vtype##_next(vtype##_iter *i)                                                                         \
     {                                                                                                                 \
-        i->ptr++;                                                                                                     \
+       return ++(*i);                                                                                                       \
     }                                                                                                                 \
     /* prev 指针前移1*/                                                                                           \
-    prefix void vtype##_prev(vtype##_iter *i)                                                                         \
+    prefix vtype##_iter vtype##_prev(vtype##_iter *i)                                                                         \
     {                                                                                                                 \
-        i->ptr--;                                                                                                     \
+       return --(*i);                                                                                                       \
     }                                                                                                                 \
     /* get_by_iter 取得指针指向的元素*/                                                                      \
     prefix type vtype##_deref(vtype##_iter i)                                                                         \
     {                                                                                                                 \
-        return *(i.ptr);                                                                                              \
+        return *(i  );                                                                                              \
     }                                                                                                                 \
     /* eqi 指针是否相等*/                                                                                       \
     prefix int vtype##_eqi(vtype##_iter ia, vtype##_iter ib)                                                          \
     {                                                                                                                 \
-        return (ia.ptr == ib.ptr);                                                                                    \
+        return  ia  == ib  ;                                                                                    \
     }                                                                                                                 \
-    /* default_copy 自动生成的拷贝函数*/                                                                     \
-    prefix type vtype##_default_copy(type obj)                                                                        \
+    /* smart_copy 不为NULL才调用copy（就这？） */                                                           \
+    static inline type vtype##smart_copy(vtype##_copy_t copy, type obj)                                               \
     {                                                                                                                 \
-        return obj;                                                                                                   \
+        return copy ? copy((type)obj) : obj;                                                                          \
     }                                                                                                                 \
-    /* default_deinit 自动生成的析构函数*/                                                                   \
-    prefix void vtype##_default_deinit(type obj) {}                                                                   \
+    /* smart_deinit 不为NULL才调用deinit（就这？） */                                                       \
+    static inline void vtype##smart_deinit(vtype##_deinit_t deinit, type obj)                                         \
+    {                                                                                                                 \
+        if (deinit)                                                                                                   \
+            deinit(obj);                                                                                              \
+    }                                                                                                                 \
     /* init 创建vector*/                                                                                            \
     prefix vtype *vtype##_init(vtype##_copy_t copy, vtype##_deinit_t deinit)                                          \
     {                                                                                                                 \
         vtype *v = malloc(sizeof(vtype));                                                                             \
-        v->copy = copy ? copy : vtype##_default_copy;                                                                 \
-        v->deinit = deinit ? deinit : vtype##_default_deinit;                                                         \
+        v->copy = copy;                                                                                               \
+        v->deinit = deinit;                                                                                           \
         v->capacity = INITIAL_CAPACITY;                                                                               \
         v->array = malloc(sizeof(type) * v->capacity);                                                                \
         v->size = 0;                                                                                                  \
@@ -91,14 +94,14 @@
     prefix vtype *vtype##_init_by_array(const type *array, size_t size, vtype##_copy_t copy, vtype##_deinit_t deinit) \
     {                                                                                                                 \
         vtype *v = malloc(sizeof(vtype));                                                                             \
-        v->copy = copy ? copy : vtype##_default_copy;                                                                 \
-        v->deinit = deinit ? deinit : vtype##_default_deinit;                                                         \
+        v->copy = copy;                                                                                               \
+        v->deinit = deinit;                                                                                           \
         v->capacity = (size_t)(size * GROWTH_RATE);                                                                   \
         v->size = size;                                                                                               \
         v->array = malloc(sizeof(type) * v->capacity);                                                                \
         for (size_t i = 0; i < size; ++i)                                                                             \
         {                                                                                                             \
-            v->array[i] = v->copy((type)array[i]);                                                                    \
+            v->array[i] = vtype##smart_copy(v->copy, (type)array[i]);                                                 \
         }                                                                                                             \
         return v;                                                                                                     \
     }                                                                                                                 \
@@ -107,7 +110,7 @@
     {                                                                                                                 \
         for (size_t i = 0; i < v->size; ++i)                                                                          \
         {                                                                                                             \
-            v->deinit(v->array[i]);                                                                                   \
+            vtype##smart_deinit(v->deinit, v->array[i]);                                                              \
         }                                                                                                             \
         free(v->array);                                                                                               \
         free(v);                                                                                                      \
@@ -117,7 +120,7 @@
     {                                                                                                                 \
         if (v->size < v->capacity)                                                                                    \
         {                                                                                                             \
-            v->array[v->size] = v->copy(obj);                                                                         \
+            v->array[v->size] = vtype##smart_copy(v->copy, obj);                                                      \
         }                                                                                                             \
         else                                                                                                          \
         { /*大小不够，数据搬家*/                                                                             \
@@ -126,7 +129,7 @@
             memcpy(new_mem, v->array, sizeof(type) * v->size);                                                        \
             free(v->array);                                                                                           \
             v->array = new_mem;                                                                                       \
-            v->array[v->size] = v->copy(obj);                                                                         \
+            v->array[v->size] = vtype##smart_copy(v->copy, obj);                                                      \
         }                                                                                                             \
         v->size++;                                                                                                    \
     }                                                                                                                 \
@@ -138,15 +141,15 @@
     /* erase 删除元素 */                                                                                          \
     prefix vtype##_iter vtype##_erase(vtype *v, vtype##_iter i)                                                       \
     {                                                                                                                 \
-        type *p = i.ptr;                                                                                              \
-        v->deinit(*p);                                                                                                \
-        type *ep = vtype##_end(v).ptr;                                                                                \
+        type *p = i ;                                                                                              \
+        vtype##smart_deinit(v->deinit, *p);                                                                           \
+        type *ep = vtype##_end(v) ;                                                                                \
         memmove(p, p + 1, (ep - (p + 1)) * sizeof(type));                                                             \
         v->size--;                                                                                                    \
         return i;                                                                                                     \
     }
 
-#define FOREACH(elemi, vtype, cp)                \
+#define FOREACH(elemi, vtype, cp)               \
     elemi = vtype##_deref(vtype##_begin(cp));   \
     for (vtype##_iter iter = vtype##_begin(cp); \
          !vtype##_eqi(iter, vtype##_end(cp));   \
