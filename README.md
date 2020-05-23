@@ -97,14 +97,7 @@ int main(void)
 *本项目仍处于开发之中，所有API不保证向后兼容。*
 
 *用斜体书写的vtype、type和prefix，应用`DECL_VEC`和`DEF_VEC`的对应实参替换。*
-
-```
-    prefix vtype *vtype##_init(vtype##_copy_t, vtype##_deinit_t);                                                      \
-    prefix vtype *vtype##_init_by_array(const type *array, size_t size, vtype##_copy_t copy, vtype##_deinit_t deinit); \
-    prefix void vtype##_deinit(vtype *v);                                                                              \
-    prefix void vtype##_push_back(vtype *v, type obj);                                                                 \
-    prefix type vtype##_get(const vtype *v, size_t index);
-```
+ 
 ### 3.1 *vtype*_init
 ##### 简介：
 创建一个空列表。
