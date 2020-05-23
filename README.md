@@ -8,7 +8,7 @@ CVec使用起来十分方便。它的基本原理是利用宏生成结构体和�
 
 ### 2.1 生成代码
 
-首先，用`DECL_VEC(vtype, type, prefix)`宏生成结构体和函数原型声明。`vtype`代表线性表的结构体名称及相关函数名的开头部分，你可以取一个自己喜欢的名字（只要它符合C的标识符规范）。`type`代表线性表中存储的数据类型，比如`int`、`float`或者`char*`。建议不要在这里加上`const`限定符，否则编译器会报告warning。`prefix`是所有生成函数的前缀。比如填写`static`将使所有生成出来的函数带上`static`前缀，从而使得它们具有内部链接。如果没有这方面的需求，可以留空此参数或用`EMPTY_PREF`占位。
+首先，用`DECL_VEC(vtype, type, prefix)`宏生成结构体和函数原型声明。`vtype`代表线性表的结构体名称及相关函数名的开头部分，你可以取一个自己喜欢的名字（只要它符合C的标识符规范）。`type`代表线性表中存储的数据类型，比如`int`、`float`或者`char*`。建议不要在这里加上`const`限定符，否则编译器会报告warning。`prefix`是所有生成出的函数的前缀。比如填写`static`将使所有生成出来的函数带上`static`前缀，从而使得它们具有内部链接。如果没有这方面的需求，可以留空此参数或用`EMPTY_PREF`占位。
 
 例如，这样可以生成一个存放`int`的线性表的相关声明：
 
@@ -31,9 +31,9 @@ CVec使用起来十分方便。它的基本原理是利用宏生成结构体和�
 DECL_VEC(IntList, int, EMPTY_PREF)
 DEF_VEC(IntList, int, EMPTY_PREF)
 ```
-生成了 IntList 相关代码，现在可以用`IntList_init`函数创建一个线性表：
+生成了 IntList 相关代码，现在可以用`{vtype}_init`函数创建一个线性表：
 ```
-  IntList *my_list = IntList_init(IntList_default_copy, IntList_default_deinit);
+IntList *my_list = IntList_init(IntList_default_copy, IntList_default_deinit);
 ```
 第一个参数是一个函数指针，类似C++的拷贝构造函数。它在向列表添加元素时被调用，该函数的参数类型和返回值类型都是`{type}`。我们会为您生成默认的拷贝函数，是一个简单的`=`赋值。如果您认为这样就足够，可以用`{vtype}_default_copy`来作为此处的实参。
 
@@ -41,7 +41,7 @@ DEF_VEC(IntList, int, EMPTY_PREF)
 
 返回值是表的指针。
 
-接下来我们用一个循环，用`IntList_push_back`向my_list里面添加1-10共十个元素。
+接下来我们用一个循环，用`{vtype}_push_back`向my_list里面添加1-10共十个元素。
 
 ```
 for (int n = 1; n <= 10; ++n)
@@ -49,7 +49,7 @@ for (int n = 1; n <= 10; ++n)
     IntList_push_back(my_list, n);
 }
 ```
-`{vtype}_default_copy`向表的尾部添加元素。第一个参数是表的指针，第二个参数是要添加的对象，类型为`{type}`。
+`{vtype}_push_back`向表的尾部添加元素。第一个参数是表的指针，第二个参数是要添加的对象，类型为`{type}`。
 
 然后，我们用`FOREACH`宏来遍历每个元素，打印出它们的值，看看是否成功添加。
 
