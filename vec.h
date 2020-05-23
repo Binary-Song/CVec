@@ -147,9 +147,9 @@
     }
 
 #define FOREACH(elemi, vtype, cp)                \
-    elemi = vtype##_deref(vtype##_begin(*cp));   \
-    for (vtype##_iter iter = vtype##_begin(*cp); \
-         !vtype##_eqi(iter, vtype##_end(*cp));   \
+    elemi = vtype##_deref(vtype##_begin(cp));   \
+    for (vtype##_iter iter = vtype##_begin(cp); \
+         !vtype##_eqi(iter, vtype##_end(cp));   \
          vtype##_next(&iter), elemi = vtype##_deref(iter))
 
 #endif
