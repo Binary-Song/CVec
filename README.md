@@ -1,12 +1,39 @@
 CVec 文档
 ------
-## 1. CVec
+
+<!-- vscode-markdown-toc -->
+* 1. [CVec](#CVec)
+* 2. [使用CVec](#CVec-1)
+	* 2.1. [生成代码](#)
+	* 2.2. [调用接口](#-1)
+* 3. [API](#API)
+	* 3.1. [*vtype*_init](#vtype_init)
+	* 3.2. [*vtype*_init_by_array](#vtype_init_by_array)
+	* 3.3. [*vtype*_deinit](#vtype_deinit)
+	* 3.4. [*vtype*_push_back](#vtype_push_back)
+	* 3.5. [*vtype*_get](#vtype_get)
+	* 3.6. [*vtype*_erase](#vtype_erase)
+	* 3.7. [*vtype*_begin](#vtype_begin)
+	* 3.8. [*vtype*_end](#vtype_end)
+	* 3.9. [*vtype*_next](#vtype_next)
+	* 3.10. [*vtype*_prev](#vtype_prev)
+	* 3.11. [*vtype*_deref](#vtype_deref)
+	* 3.12. [*vtype*_eqi](#vtype_eqi)
+	* 3.13. [FOREACH](#FOREACH)
+
+<!-- vscode-markdown-toc-config
+	numbering=true
+	autoSave=true
+	/vscode-markdown-toc-config -->
+<!-- /vscode-markdown-toc -->
+
+##  1. <a name='CVec'></a>CVec
 CVec是一个C语言实现的线性表库。它能在运行时改变容器大小，因此比数组更加灵活；它支持编译期的类型检查，因此比未模板化的数据结构更加安全。CVec只包含一个文件：vec.h。使用时`#include`它即可。
 
-## 2. 使用CVec
+##  2. <a name='CVec-1'></a>使用CVec
 CVec使用起来十分方便。它的基本原理是利用宏生成结构体和函数的声明和定义。因此，您在使用CVec前要先调用宏来生成它们。
 
-### 2.1 生成代码
+###  2.1. <a name=''></a>生成代码
 
 首先，用`DECL_VEC(vtype, type, prefix)`宏生成结构体和函数原型声明。`vtype`代表线性表的结构体名称及相关函数名的开头部分，你可以取一个自己喜欢的名字（只要它符合C的标识符规范）。`type`代表线性表中存储的数据类型，比如`int`、`float`或者`char*`。建议不要在这里加上`const`限定符，否则编译器会报告warning。`prefix`是所有生成出的函数的前缀。比如填写`static`将使所有生成出来的函数带上`static`前缀，从而使得它们具有内部链接。如果没有这方面的需求，可以留空此参数或用`EMPTY_PREF`占位。
 
@@ -22,7 +49,7 @@ CVec使用起来十分方便。它的基本原理是利用宏生成结构体和�
 
 可以将`DECL_VEC`放在头文件中，`DEF_VEC`放在源文件中以分离接口和实现。
 
-### 2.2 调用接口
+###  2.2. <a name='-1'></a>调用接口
 
 *用斜体书写的 `vtype` 和 `type` ，应该用 `DECL_VEC`和 `DEF_VEC`的对应实参替换。*
 
@@ -92,13 +119,13 @@ int main(void)
 }
 ```
 
-## 3.API说明
+##  3. <a name='API'></a>API
 
 *本项目仍处于开发之中，所有API不保证向后兼容。*
 
 *用斜体书写的 `vtype` 和 `type` ，应该用 `DECL_VEC`和 `DEF_VEC`的对应实参替换。*
  
-### 3.1 *vtype*_init
+###  3.1. <a name='vtype_init'></a>*vtype*_init
 ##### 简介：
 创建一个空列表。
 
@@ -133,7 +160,7 @@ void free_cstr(char* str)
     free(str);
 }
 ```
-### 3.2 *vtype*_init_by_array
+###  3.2. <a name='vtype_init_by_array'></a>*vtype*_init_by_array
 ##### 简介：
 根据数组创建列表。
 
@@ -155,7 +182,7 @@ deinit | 用来回收*type*类型对象的回调函数。如果为NULL，则使�
 ##### 说明：
 创建列表，并拷贝数组中的每一个元素到此列表中。
 
-### 3.3 *vtype*_deinit
+###  3.3. <a name='vtype_deinit'></a>*vtype*_deinit
 ##### 简介：
 根据数组创建列表。
 
@@ -170,7 +197,7 @@ v | 列表的指针。
 ##### 说明：
 销毁列表，对每一个元素调用deinit回调函数（NULL则无动作）。
 
-### 3.4 *vtype*_push_back
+###  3.4. <a name='vtype_push_back'></a>*vtype*_push_back
 ##### 简介：
 向列表尾部添加元素。
 
@@ -186,7 +213,7 @@ obj |添加的元素。将用copy回调函数拷贝它再添加。
 ##### 说明：
 向列表尾部添加元素，添加时用copy回调函数进行拷贝（NULL则使用`=`直接赋值）。
 
-### 3.4 *vtype*_get
+###  3.5. <a name='vtype_get'></a>*vtype*_get
 ##### 简介：
 取得元素。
 
@@ -202,7 +229,7 @@ index | 取第index-1个元素。
 ##### 说明：
 返回列表中的第index-1个元素，不会调用copy回调函数。
 
-### 3.5 *vtype*_erase
+###  3.6. <a name='vtype_erase'></a>*vtype*_erase
 ##### 简介：
 删除元素。
 
@@ -222,7 +249,7 @@ i | 指向被删除元素的迭代器。
 ##### 说明：
 删除迭代器指向的元素，调用deinit回调函数进行析构（NULL则无动作）。
 
-### 3.6 *vtype*_begin
+###  3.7. <a name='vtype_begin'></a>*vtype*_begin
 ##### 简介：
 取得指向第一个元素的迭代器。
 
@@ -239,7 +266,7 @@ v | 列表的指针。
 
 
 
-### 3.7 *vtype*_end
+###  3.8. <a name='vtype_end'></a>*vtype*_end
 ##### 简介：
 取得指向的前一个元素是列表最后一个元素的迭代器。
 
@@ -259,7 +286,7 @@ v | 列表的指针。
 
 
 
-### 3.8 *vtype*_next
+###  3.9. <a name='vtype_next'></a>*vtype*_next
 ##### 简介：
 将迭代器后移一个元素。
 
@@ -279,7 +306,7 @@ i | 指向迭代器的指针。
 
 
 
-### 3.9 *vtype*_prev
+###  3.10. <a name='vtype_prev'></a>*vtype*_prev
 ##### 简介：
 将迭代器前移一个元素。
 
@@ -299,7 +326,7 @@ i | 指向迭代器的指针。
 
 
 
-### 3.9 *vtype*_deref
+###  3.11. <a name='vtype_deref'></a>*vtype*_deref
 ##### 简介：
 解引用迭代器。
 
@@ -319,7 +346,7 @@ i | 迭代器。
 
 
 
-### 3.10 *vtype*_eqi
+###  3.12. <a name='vtype_eqi'></a>*vtype*_eqi
 ##### 简介：
 返回两个迭代器是否指向同一个元素。
 
@@ -338,5 +365,19 @@ ib | 要比较的迭代器。
 ##### 说明：
 可以用`ia == ib`代替。
 
- 
+###  3.13. <a name='FOREACH'></a>FOREACH
+##### 简介：
+遍历列表。
 
+##### 宏：
+> FOREACH(elemi, vtype, vp) ...
+
+##### 参数：
+参数|描述
+-|-
+elemi | 迭代变量，每次遍历赋给它当前元素的值（不调用copy回调函数）。
+vtype | 列表的*vtype*
+vp | 指向列表的指针
+
+##### 说明：
+用FOREACH可以方便地遍历列表，具体可以参照2.2中给出的例子。
