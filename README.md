@@ -87,13 +87,13 @@ FOREACH(a, IntList, my_list)
     printf("%d\n", a);
 }
 ```
-`FOREACH(elem, vtype, vp)`宏的第一个参数`elem`是迭代变量，用它来表示每个元素的值。第二个参数`vtype`是需要遍历的表的`vtype`。第三个参数`vp`是表的指针。
+`FOREACH(elem, vtype, vp)`宏的第一个参数`elem`是迭代变量，用它来表示每个元素的值。第二个参数`vtype`是需要遍历的表的 *`vtype`*。第三个参数`vp`是表的指针。
 
 最后，不要忘记释放表占用的内存。
 ```
 IntList_deinit(my_list);
 ```
-`*vtype*_deinit`能释放表占用的内存，并且一一调用之前指定的析构函数，确保没有内存泄漏。它的唯一参数是表的指针。
+*`vtype`*`_deinit`能释放表占用的内存，并且一一调用之前指定的析构函数，确保没有内存泄漏。它的唯一参数是表的指针。
 
 完整代码是这样的：
 ```
