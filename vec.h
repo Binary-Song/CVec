@@ -26,8 +26,8 @@
     /*迭代器相关*/                                                                                                 \
     prefix vtype##_iter vtype##_begin(const vtype *v);                                                                  \
     prefix vtype##_iter vtype##_end(const vtype *v);                                                                    \
-    prefix vtype##_iter vtype##_next(vtype##_iter *i);                                                                          \
-    prefix vtype##_iter vtype##_prev(vtype##_iter *i);                                                                          \
+    prefix vtype##_iter vtype##_next(vtype##_iter *i);                                                                  \
+    prefix vtype##_iter vtype##_prev(vtype##_iter *i);                                                                  \
     prefix type vtype##_deref(vtype##_iter i);                                                                          \
     prefix int vtype##_eqi(vtype##_iter ia, vtype##_iter ib);                                                           \
     /*vector相关*/                                                                                                    \
@@ -49,24 +49,24 @@
         return v->array + v->size;                                                                                    \
     }                                                                                                                 \
     /* next 指针后移1*/                                                                                           \
-    prefix vtype##_iter vtype##_next(vtype##_iter *i)                                                                         \
+    prefix vtype##_iter vtype##_next(vtype##_iter *i)                                                                 \
     {                                                                                                                 \
-       return ++(*i);                                                                                                       \
+        return ++(*i);                                                                                                \
     }                                                                                                                 \
     /* prev 指针前移1*/                                                                                           \
-    prefix vtype##_iter vtype##_prev(vtype##_iter *i)                                                                         \
+    prefix vtype##_iter vtype##_prev(vtype##_iter *i)                                                                 \
     {                                                                                                                 \
-       return --(*i);                                                                                                       \
+        return --(*i);                                                                                                \
     }                                                                                                                 \
     /* get_by_iter 取得指针指向的元素*/                                                                      \
     prefix type vtype##_deref(vtype##_iter i)                                                                         \
     {                                                                                                                 \
-        return *(i  );                                                                                              \
+        return *(i);                                                                                                  \
     }                                                                                                                 \
     /* eqi 指针是否相等*/                                                                                       \
     prefix int vtype##_eqi(vtype##_iter ia, vtype##_iter ib)                                                          \
     {                                                                                                                 \
-        return  ia  == ib  ;                                                                                    \
+        return ia == ib;                                                                                              \
     }                                                                                                                 \
     /* smart_copy 不为NULL才调用copy（就这？） */                                                           \
     static inline type vtype##smart_copy(vtype##_copy_t copy, type obj)                                               \
@@ -141,12 +141,17 @@
     /* erase 删除元素 */                                                                                          \
     prefix vtype##_iter vtype##_erase(vtype *v, vtype##_iter i)                                                       \
     {                                                                                                                 \
-        type *p = i ;                                                                                              \
+        type *p = i;                                                                                                  \
         vtype##smart_deinit(v->deinit, *p);                                                                           \
-        type *ep = vtype##_end(v) ;                                                                                \
+        type *ep = vtype##_end(v);                                                                                    \
         memmove(p, p + 1, (ep - (p + 1)) * sizeof(type));                                                             \
         v->size--;                                                                                                    \
         return i;                                                                                                     \
+    }                                                                                                                 \
+    /* erase 删除一些元素*/                                                                                     \
+    prefix vtype##_iter vtype##_erase_range(vtype *v, vtype##_iter from, vtype##_iter to)                             \
+    {                                                                                                                 \
+        while(from != to);                                                                                                             \
     }
 
 #define FOREACH(elemi, vtype, cp)               \
