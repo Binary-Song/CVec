@@ -24,24 +24,24 @@ CVec使用起来十分方便。它的基本原理是利用宏生成结构体和�
 
 ### 2.2 调用接口
 
-*用斜体书写的vtype、type和prefix，应用`DECL_VEC`和`DEF_VEC`的对应实参替换。*
+*用斜体书写的 `vtype` 和 `type` ，应该用 `DECL_VEC`和 `DEF_VEC`的对应实参替换。*
 
 所有的接口函数都以 *`vtype`* 开头。刚才我们已经用
 ```
 DECL_VEC(IntList, int, EMPTY_PREF)
 DEF_VEC(IntList, int, EMPTY_PREF)
 ```
-生成了 IntList 相关代码，现在可以用 *`vtype`*_init函数创建一个线性表：
+生成了 `IntList` 相关代码，现在可以用 *`vtype`*_init函数创建一个线性表：
 ```
 IntList *my_list = IntList_init(NULL, NULL);
 ```
-第一个参数是一个函数指针，类似C++的拷贝构造函数。它在向列表添加元素时被调用，该函数的参数类型和返回值类型都是*type*。如果您认为默认的拷贝方式（简单的`=`号赋值）就足够，可以用`NULL`来作为此处的实参。
+第一个参数是一个函数指针，类似C++的拷贝构造函数。它在向列表添加元素时被调用，该函数的参数类型和返回值类型都是 *`type`*。如果您认为默认的拷贝方式（简单的`=`号赋值）就足够，可以用`NULL`来作为此处的实参。
  
 第二个参数也是一个函数指针，类似C++的析构函数。它在删除列表元素时调用。如果您认为不需要特别的析构处理，可以用`NULL`来作为此处的实参。
 
 返回值是表的指针。
 
-接下来我们用一个循环，用*vtype*_push_back向my_list里面添加1-10共十个元素。
+接下来我们用一个循环，用 *`vtype`*`_push_back`*向`my_list`里面添加1-10共十个元素。
 
 ```
 for (int n = 1; n <= 10; ++n)
@@ -49,7 +49,7 @@ for (int n = 1; n <= 10; ++n)
     IntList_push_back(my_list, n);
 }
 ```
-*vtype*_push_back向表的尾部添加元素。第一个参数是表的指针，第二个参数是要添加的对象，类型为*type*。
+*`vtype`*`_push_back`*向表的尾部添加元素。第一个参数是表的指针，第二个参数是要添加的对象，类型为 *`type`*。
 
 然后，我们用`FOREACH`宏来遍历每个元素，打印出它们的值，看看是否成功添加。
 
@@ -96,19 +96,19 @@ int main(void)
 
 *本项目仍处于开发之中，所有API不保证向后兼容。*
 
-*用斜体书写的vtype、type和prefix，应用`DECL_VEC`和`DEF_VEC`的对应实参替换。*
+*用斜体书写的 `vtype` 和 `type` ，应该用 `DECL_VEC`和 `DEF_VEC`的对应实参替换。*
  
 ### 3.1 *vtype*_init
 ##### 简介：
 创建一个空列表。
 
 ##### 函数签名
-*prefix* *vtype* \**vtype*_init(*vtype*_copy_t copy, *vtype*_deinit_t deinit)
+> *prefix* *vtype* \**vtype*_init(*vtype*_copy_t copy, *vtype*_deinit_t deinit)
 
 ##### 回调函数：
-*type* (*vtype*_copy_t)(*type* obj)
+> *type* (*vtype*_copy_t)(*type* obj)
 
-void (*vtype*_deinit_t)(*type* obj)
+> void (*vtype*_deinit_t)(*type* obj)
 
 ##### 参数：
 参数|描述
@@ -138,11 +138,11 @@ void free_cstr(char* str)
 根据数组创建列表。
 
 ##### 函数签名
- *prefix* *vtype* \**vtype*_init_by_array(const *type* \*array, size_t count, *vtype*_copy_t copy, *vtype*_deinit_t deinit);
+> *prefix* *vtype* \**vtype*_init_by_array(const *type* \*array, size_t count, *vtype*_copy_t copy, *vtype*_deinit_t deinit);
 ##### 回调函数：
-*type* (*vtype*_copy_t)(*type* obj)
+> *type* (*vtype*_copy_t)(*type* obj)
 
-void (*vtype*_deinit_t)(*type* obj)
+> void (*vtype*_deinit_t)(*type* obj)
 
 ##### 参数：
 参数|描述
@@ -160,12 +160,12 @@ deinit | 用来回收*type*类型对象的回调函数。如果为NULL，则使�
 根据数组创建列表。
 
 ##### 函数签名
- *prefix* void *vtype*_deinit(*vtype* \*v)
+> *prefix* void *vtype*_deinit(*vtype* \*v)
  
 ##### 参数：
 参数|描述
 -|-
-v |销毁的列表。
+v | 列表的指针。
 
 ##### 说明：
 销毁列表，对每一个元素调用deinit回调函数（NULL则无动作）。
@@ -175,12 +175,12 @@ v |销毁的列表。
 向列表尾部添加元素。
 
 ##### 函数签名
- *prefix* void vtype*_push_back(vtype \*v, type obj)
+> *prefix* void vtype*_push_back(vtype \*v, type obj)
 
 ##### 参数：
 参数|描述
 -|-
-v |添加元素的列表。
+v | 列表的指针。
 obj |添加的元素。将用copy回调函数拷贝它再添加。
 
 ##### 说明：
@@ -191,12 +191,12 @@ obj |添加的元素。将用copy回调函数拷贝它再添加。
 取得元素。
 
 ##### 函数签名
- *prefix* *type* *vtype*_get(const *vtype* \*v, size_t index);
+> *prefix* *type* *vtype*_get(const *vtype* \*v, size_t index);
 
 ##### 参数：
 参数|描述
 -|-
-v |从此列表取得元素值。
+v | 列表的指针。
 index | 取第index-1个元素。
 
 ##### 说明：
@@ -208,18 +208,134 @@ index | 取第index-1个元素。
 
 ##### 函数签名
 
-*prefix* *vtype*_iter *vtype*_erase(*vtype* \*v, *vtype*_iter i)
+> *prefix* *vtype*_iter *vtype*_erase(*vtype* \*v, *vtype*_iter i)
 
 ##### 参数：
 参数|描述
 -|-
-v |从此列表取得元素值。
-index | 取第index-1个元素。
+v | 列表的指针。
+i | 指向被删除元素的迭代器。
+
+##### 返回值：
+指向被删除元素下一个元素的迭代器。如果被删除的元素在末尾，就返回尾后迭代器。
 
 ##### 说明：
-返回列表中的第index-1个元素，不会调用copy回调函数。
+删除迭代器指向的元素，调用deinit回调函数进行析构（NULL则无动作）。
+
+### 3.6 *vtype*_begin
+##### 简介：
+取得指向第一个元素的迭代器。
+
+##### 函数签名
+> *prefix* *vtype*_iter *vtype*_begin(const *vtype* \*v)
+
+##### 参数：
+参数|描述
+-|-
+v | 列表的指针。
+
+##### 返回值：
+指向第一个元素的迭代器。
 
 
 
+### 3.7 *vtype*_end
+##### 简介：
+取得指向的前一个元素是列表最后一个元素的迭代器。
 
+##### 函数签名
+> *prefix* *vtype*_iter *vtype*_end(const *vtype* \*v)
+
+##### 参数：
+参数|描述
+-|-
+v | 列表的指针。
+
+##### 返回值：
+指向的前一个元素是列表最后一个元素的迭代器，即尾后迭代器。
+
+##### 说明：
+不要对此迭代器进行解引用操作，结果将是未定义的。
+
+
+
+### 3.8 *vtype*_next
+##### 简介：
+将迭代器后移一个元素。
+
+##### 函数签名
+> *prefix* *vtype*_iter *vtype*_next(*vtype*_iter \*i)
+
+##### 参数：
+参数|描述
+-|-
+i | 指向迭代器的指针。
+
+##### 返回值：
+移动后的迭代器。
+ 
+##### 说明：
+不会进行边界检查。可以用`++i`代替。
+
+
+
+### 3.9 *vtype*_prev
+##### 简介：
+将迭代器前移一个元素。
+
+##### 函数签名
+> *prefix* *vtype*_iter *vtype*_prev(*vtype*_iter \*i)
+
+##### 参数：
+参数|描述
+-|-
+i | 指向迭代器的指针。
+
+##### 返回值：
+移动后的迭代器。
+ 
+##### 说明：
+不会进行边界检查。可以用`--i`代替。
+
+
+
+### 3.9 *vtype*_deref
+##### 简介：
+解引用迭代器。
+
+##### 函数签名
+> *prefix* *type*_iter *vtype*_deref(*vtype*_iter \*i) 
+
+##### 参数：
+参数|描述
+-|-
+i | 迭代器。
+
+##### 返回值：
+迭代器指向的元素。
+ 
+##### 说明：
+不会调用copy回调函数，可以用`*i`代替。
+
+
+
+### 3.10 *vtype*_eqi
+##### 简介：
+返回迭代器是否指向同一个元素。
+
+##### 函数签名
+> *prefix* *int* *vtype*_eqi(*vtype*_iter ia, *vtype*_iter ib)  
+
+##### 参数：
+参数|描述
+-|-
+i | 迭代器。
+
+##### 返回值：
+迭代器是否指向同一个元素。否，返回0；是，返回非零。
+ 
+##### 说明：
+可以用`ia == ib`代替。
+
+ 
 
