@@ -68,7 +68,7 @@ IntList *my_list = IntList_init(NULL, NULL);
 
 返回值是表的指针。
 
-接下来我们用一个循环，用 *`vtype`*`_push_back`*向`my_list`里面添加1-10共十个元素。
+接下来我们用一个循环，用 *`vtype`*`_push_back`向`my_list`里面添加1-10共十个元素。
 
 ```
 for (int n = 1; n <= 10; ++n)
@@ -76,7 +76,7 @@ for (int n = 1; n <= 10; ++n)
     IntList_push_back(my_list, n);
 }
 ```
-*`vtype`*`_push_back`*向表的尾部添加元素。第一个参数是表的指针，第二个参数是要添加的对象，类型为 *`type`*。
+*`vtype`*`_push_back`向表的尾部添加元素。第一个参数是表的指针，第二个参数是要添加的对象，类型为 *`type`*。
 
 然后，我们用`FOREACH`宏来遍历每个元素，打印出它们的值，看看是否成功添加。
 
