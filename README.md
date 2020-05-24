@@ -24,24 +24,24 @@ CVec使用起来十分方便。它的基本原理是利用宏生成结构体和�
 
 ### 2.2 调用接口
 
-*接下来提到的`{vtype}`和`{type}`都应当用`DECL_VEC`和`DEF_VEC`两个宏的对应实参来替换。比如对于之前的例子，应该用`IntList`替换`{vtype}`，用`int`替换`{type}`。*
+*用斜体书写的vtype、type和prefix，应用`DECL_VEC`和`DEF_VEC`的对应实参替换。*
 
-所有的接口函数都以`{vtype}`开头。刚才我们已经用
+所有的接口函数都以 *`vtype`* 开头。刚才我们已经用
 ```
 DECL_VEC(IntList, int, EMPTY_PREF)
 DEF_VEC(IntList, int, EMPTY_PREF)
 ```
-生成了 IntList 相关代码，现在可以用`{vtype}_init`函数创建一个线性表：
+生成了 IntList 相关代码，现在可以用 *`vtype`*_init函数创建一个线性表：
 ```
 IntList *my_list = IntList_init(NULL, NULL);
 ```
-第一个参数是一个函数指针，类似C++的拷贝构造函数。它在向列表添加元素时被调用，该函数的参数类型和返回值类型都是`{type}`。如果您认为默认的拷贝方式（简单的`=`赋值）就足够，可以用`NULL`来作为此处的实参。
-
+第一个参数是一个函数指针，类似C++的拷贝构造函数。它在向列表添加元素时被调用，该函数的参数类型和返回值类型都是*type*。如果您认为默认的拷贝方式（简单的`=`号赋值）就足够，可以用`NULL`来作为此处的实参。
+ 
 第二个参数也是一个函数指针，类似C++的析构函数。它在删除列表元素时调用。如果您认为不需要特别的析构处理，可以用`NULL`来作为此处的实参。
 
 返回值是表的指针。
 
-接下来我们用一个循环，用`{vtype}_push_back`向my_list里面添加1-10共十个元素。
+接下来我们用一个循环，用*vtype*_push_back向my_list里面添加1-10共十个元素。
 
 ```
 for (int n = 1; n <= 10; ++n)
@@ -49,7 +49,7 @@ for (int n = 1; n <= 10; ++n)
     IntList_push_back(my_list, n);
 }
 ```
-`{vtype}_push_back`向表的尾部添加元素。第一个参数是表的指针，第二个参数是要添加的对象，类型为`{type}`。
+*vtype*_push_back向表的尾部添加元素。第一个参数是表的指针，第二个参数是要添加的对象，类型为*type*。
 
 然后，我们用`FOREACH`宏来遍历每个元素，打印出它们的值，看看是否成功添加。
 
@@ -66,7 +66,7 @@ FOREACH(a, IntList, my_list)
 ```
 IntList_deinit(my_list);
 ```
-`{vtype}_deinit`能释放表占用的内存，并且一一调用之前指定的析构函数，确保没有内存泄漏。它的唯一参数是表的指针。
+`*vtype*_deinit`能释放表占用的内存，并且一一调用之前指定的析构函数，确保没有内存泄漏。它的唯一参数是表的指针。
 
 完整代码是这样的：
 ```
@@ -106,8 +106,9 @@ int main(void)
 *prefix* *vtype* \**vtype*_init(*vtype*_copy_t copy, *vtype*_deinit_t deinit)
 
 ##### 回调函数：
-typedef *type* (*vtype*_copy_t)(*type* obj);
-typedef void (*vtype*_deinit_t)(*type* obj); 
+*type* (*vtype*_copy_t)(*type* obj)
+
+void (*vtype*_deinit_t)(*type* obj)
 
 ##### 参数：
 参数|描述
@@ -139,8 +140,9 @@ void free_cstr(char* str)
 ##### 函数签名
  *prefix* *vtype* \**vtype*_init_by_array(const *type* \*array, size_t count, *vtype*_copy_t copy, *vtype*_deinit_t deinit);
 ##### 回调函数：
-typedef *type* (*vtype*_copy_t)(*type* obj);
-typedef void (*vtype*_deinit_t)(*type* obj); 
+*type* (*vtype*_copy_t)(*type* obj)
+
+void (*vtype*_deinit_t)(*type* obj)
 
 ##### 参数：
 参数|描述
@@ -200,7 +202,24 @@ index | 取第index-1个元素。
 ##### 说明：
 返回列表中的第index-1个元素，不会调用copy回调函数。
 
-文档未完工，更多API详见源码。。。
+### 3.5 *vtype*_erase
+##### 简介：
+删除元素。
+
+##### 函数签名
+
+*prefix* *vtype*_iter *vtype*_erase(*vtype* \*v, *vtype*_iter i)
+
+##### 参数：
+参数|描述
+-|-
+v |从此列表取得元素值。
+index | 取第index-1个元素。
+
+##### 说明：
+返回列表中的第index-1个元素，不会调用copy回调函数。
+
+
 
 
 
