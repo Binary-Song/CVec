@@ -69,12 +69,12 @@
         return ia == ib;                                                                                              \
     }                                                                                                                 \
     /* smart_copy 不为NULL才调用copy（就这？） */                                                           \
-    static inline type vtype##smart_copy(vtype##_copy_t copy, type obj)                                               \
+    static inline type vtype##_smart_copy(vtype##_copy_t copy, type obj)                                              \
     {                                                                                                                 \
         return copy ? copy((type)obj) : obj;                                                                          \
     }                                                                                                                 \
     /* smart_deinit 不为NULL才调用deinit（就这？） */                                                       \
-    static inline void vtype##smart_deinit(vtype##_deinit_t deinit, type obj)                                         \
+    static inline void vtype##_smart_deinit(vtype##_deinit_t deinit, type obj)                                        \
     {                                                                                                                 \
         if (deinit)                                                                                                   \
             deinit(obj);                                                                                              \
@@ -101,7 +101,7 @@
         v->array = malloc(sizeof(type) * v->capacity);                                                                \
         for (size_t i = 0; i < size; ++i)                                                                             \
         {                                                                                                             \
-            v->array[i] = vtype##smart_copy(v->copy, (type)array[i]);                                                 \
+            v->array[i] = vtype##_smart_copy(v->copy, (type)array[i]);                                                \
         }                                                                                                             \
         return v;                                                                                                     \
     }                                                                                                                 \
@@ -110,7 +110,7 @@
     {                                                                                                                 \
         for (size_t i = 0; i < v->size; ++i)                                                                          \
         {                                                                                                             \
-            vtype##smart_deinit(v->deinit, v->array[i]);                                                              \
+            vtype##_smart_deinit(v->deinit, v->array[i]);                                                             \
         }                                                                                                             \
         free(v->array);                                                                                               \
         free(v);                                                                                                      \
@@ -120,7 +120,7 @@
     {                                                                                                                 \
         if (v->size < v->capacity)                                                                                    \
         {                                                                                                             \
-            v->array[v->size] = vtype##smart_copy(v->copy, obj);                                                      \
+            v->array[v->size] = vtype##_smart_copy(v->copy, obj);                                                     \
         }                                                                                                             \
         else                                                                                                          \
         { /*大小不够，数据搬家*/                                                                             \
@@ -129,7 +129,7 @@
             memcpy(new_mem, v->array, sizeof(type) * v->size);                                                        \
             free(v->array);                                                                                           \
             v->array = new_mem;                                                                                       \
-            v->array[v->size] = vtype##smart_copy(v->copy, obj);                                                      \
+            v->array[v->size] = vtype##_smart_copy(v->copy, obj);                                                     \
         }                                                                                                             \
         v->size++;                                                                                                    \
     }                                                                                                                 \
@@ -142,16 +142,31 @@
     prefix vtype##_iter vtype##_erase(vtype *v, vtype##_iter i)                                                       \
     {                                                                                                                 \
         type *p = i;                                                                                                  \
-        vtype##smart_deinit(v->deinit, *p);                                                                           \
         type *ep = vtype##_end(v);                                                                                    \
+        vtype##_smart_deinit(v->deinit, *p);                                                                          \
         memmove(p, p + 1, (ep - (p + 1)) * sizeof(type));                                                             \
         v->size--;                                                                                                    \
         return i;                                                                                                     \
     }                                                                                                                 \
-    /* erase 删除一些元素*/                                                                                     \
-    prefix vtype##_iter vtype##_erase_range(vtype *v, vtype##_iter from, vtype##_iter to)                             \
+    /* erase_range 删除一些元素*/                                                                               \
+    prefix vtype##_iter vtype##_erase_range(vtype *v, vtype##_iter first, vtype##_iter last)                          \
     {                                                                                                                 \
-        while(from != to);                                                                                                             \
+        for (vtype##_iter i = first; i != last; ++i)                                                                  \
+        {                                                                                                             \
+            vtype##_smart_deinit(v->deinit, *i);                                                                      \
+        }                                                                                                             \
+        memmove(first, last, (vtype##_end(v) - last) * sizeof(type));                                                 \
+        v->size -= last - first;                                                                                      \
+        return first;                                                                                                 \
+    }                                                                                                                 \
+    /* pop 删除最后的元素，复制一份返回*/                                                               \
+    prefix type vtype##_pop(vtype *v)                                                                                 \
+    {                                                                                                                 \
+        type *p = vtype##_end(v) - 1;                                                                                 \
+        type copied = vtype##_smart_copy(v->copy, *p);                                                                \
+        vtype##_smart_deinit(v->deinit, *p);                                                                          \
+        v->size--;                                                                                                    \
+        return copied;                                                                                                \
     }
 
 #define FOREACH(elemi, vtype, cp)               \
