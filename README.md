@@ -39,7 +39,7 @@ CVec 只包含一个文件：vec.h，使用时`#include`它即可。CVec 的基�
 
 ### 2.1. <a name=''></a>生成代码
 
-首先，用`DECL_VEC(vtype, type, prefix)`宏生成结构体和函数原型声明。`vtype`代表列表的结构体名称及相关函数名的开头部分，你可以取一个自己喜欢的名字（只要它符合 C 的标识符规范）。`type`代表列表中存储的数据类型，比如`int`、`float`或者`char*`。建议不要在这里加上`const`限定符，否则编译器会报告 warning。`prefix`是所有生成出的函数的前缀。比如填写`static`将使所有生成出来的函数带上`static`前缀，从而使得它们具有内部链接。如果没有这方面的需求，可以留空此参数或用`EMPTY_PREF`占位。
+首先，用`DECL_VEC(vtype, type, prefix)`宏生成结构体和函数原型声明。`vtype`代表列表的结构体名称及相关函数名的开头部分，你可以取一个自己喜欢的名字（合法的 C 标识符）。`type`代表列表中存储的数据类型，比如`int`、`float`或者`char*`。建议不要在这里加上`const`限定符，否则编译器会报告 warning。`prefix`是所有生成出的函数的前缀。比如填写`static`将使所有生成出来的函数带上`static`前缀，从而使得它们具有内部链接。如果没有这方面的需求，可以留空此参数或用`EMPTY_PREF`占位。
 
 例如，这样可以生成一个存放`int`的列表的相关声明：
 
@@ -112,7 +112,7 @@ _`vtype`_`_deinit`能释放表占用的内存，并且一一调用之前指定�
 ```
 #include "vec.h"
 
-DECL_VEC(IntList, int, EMPTY_PREF)//声明函数原型和结构体
+DECL_VEC(IntList, int, EMPTY_PREF)//声明函数原型、定义结构体
 DEF_VEC(IntList, int, EMPTY_PREF)//定义函数
 
 int main(void)
