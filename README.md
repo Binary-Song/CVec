@@ -31,23 +31,23 @@
 
 ## 1. <a name='CVec'></a>CVec
 
-CVec 是一个 C 语言实现的线性表库。它能在运行时改变容器大小，因此比数组更加灵活；它支持编译期的类型检查，因此比未模板化的数据结构更加安全。CVec 只包含一个文件：vec.h。使用时`#include`它即可。
+CVec 是一个 C 语言实现的线性表容器。它能在运行时改变容器大小，因此比数组更加灵活；它支持编译期的类型检查，因此比未模板化的数据结构更加安全。
 
 ## 2. <a name='CVec-1'></a>使用 CVec
 
-CVec 使用起来十分方便。它的基本原理是利用宏生成结构体和函数的声明和定义。因此，您在使用 CVec 前要先调用宏来生成它们。
+CVec 只包含一个文件：vec.h，使用时`#include`它即可。CVec 的基本原理是用宏生成结构体和函数的声明和定义。因此，您在使用 CVec 前要先调用宏来生成它们。
 
 ### 2.1. <a name=''></a>生成代码
 
-首先，用`DECL_VEC(vtype, type, prefix)`宏生成结构体和函数原型声明。`vtype`代表线性表的结构体名称及相关函数名的开头部分，你可以取一个自己喜欢的名字（只要它符合 C 的标识符规范）。`type`代表线性表中存储的数据类型，比如`int`、`float`或者`char*`。建议不要在这里加上`const`限定符，否则编译器会报告 warning。`prefix`是所有生成出的函数的前缀。比如填写`static`将使所有生成出来的函数带上`static`前缀，从而使得它们具有内部链接。如果没有这方面的需求，可以留空此参数或用`EMPTY_PREF`占位。
+首先，用`DECL_VEC(vtype, type, prefix)`宏生成结构体和函数原型声明。`vtype`代表列表的结构体名称及相关函数名的开头部分，你可以取一个自己喜欢的名字（只要它符合 C 的标识符规范）。`type`代表列表中存储的数据类型，比如`int`、`float`或者`char*`。建议不要在这里加上`const`限定符，否则编译器会报告 warning。`prefix`是所有生成出的函数的前缀。比如填写`static`将使所有生成出来的函数带上`static`前缀，从而使得它们具有内部链接。如果没有这方面的需求，可以留空此参数或用`EMPTY_PREF`占位。
 
-例如，这样可以生成一个存放`int`的线性表的相关声明：
+例如，这样可以生成一个存放`int`的列表的相关声明：
 
 `DECL_VEC(IntList, int, EMPTY_PREF)`
 
 接下来，在`DECL_VEC`的后面调用`DEF_VEC(vtype, type, prefix)`宏来生成相关函数的定义。三个参数的含义与`DECL_VEC`相同，其中`vtype`和`type`应该与`DECL_VEC`保持一致。`prefix`则依旧根据你的需求填写。
 
-例如，生成刚才`IntList`线性表的相关函数定义：
+例如，生成刚才`IntList`列表的相关函数定义：
 
 `DEF_VEC(IntList, int, EMPTY_PREF)`
 
@@ -64,7 +64,7 @@ DECL_VEC(IntList, int, EMPTY_PREF)
 DEF_VEC(IntList, int, EMPTY_PREF)
 ```
 
-生成了 `IntList` 相关代码，现在可以用 _`vtype`_\_init 函数创建一个线性表：
+生成了 `IntList` 相关代码，现在可以用 _`vtype`_\_init 函数创建一个列表：
 
 ```
 IntList *my_list = IntList_init(NULL, NULL);
@@ -117,7 +117,7 @@ DEF_VEC(IntList, int, EMPTY_PREF)//定义函数
 
 int main(void)
 {
-    IntList *my_list = IntList_init(NULL, NULL);//创建线性表
+    IntList *my_list = IntList_init(NULL, NULL);//创建列表
     for (int n = 1; n <= 10; ++n)
     {
         IntList_push_back(my_list, n);//添加1-10
