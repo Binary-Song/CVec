@@ -4,8 +4,8 @@
 
 - 1. [CVec](#CVec)
 - 2. [使用 CVec](#CVec-1)
-     _ 2.1. [生成代码](#)
-     _ 2.2. [调用接口](#-1)
+     - 2.1. [生成代码](#)
+     - 2.2. [调用接口](#-1)
 - 3. [API](#API)
      - 3.1. [_vtype_\_init](#vtype_init)
      - 3.2. [_vtype_\_init_by_array](#vtype_init_by_array)
