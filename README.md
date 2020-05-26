@@ -134,8 +134,6 @@ int main(void)
 
 ## 3. <a name='API'></a>API
 
-_本项目仍处于开发之中，所有 API 不保证向后兼容。_
-
 _用斜体书写的 `vtype` 和 `type` ，应该用 `DECL_VEC`和 `DEF_VEC`的对应实参替换。_
 
 ### 3.1. <a name='vtype_init'></a>_vtype_\_init
