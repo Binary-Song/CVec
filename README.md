@@ -20,7 +20,8 @@
      - 3.11. [_vtype_\_next](#vtype_next)
      - 3.12. [_vtype_\_prev](#vtype_prev)
      - 3.13. [_vtype_\_deref](#vtype_deref)
-     - 3.14. [_vtype_\_eqi](#vtype_eqi) \* 3.15. [FOREACH](#FOREACH)
+     - 3.14. [_vtype_\_eqi](#vtype_eqi) 
+     - 3.15. [FOREACH](#FOREACH)
 
 <!-- vscode-markdown-toc-config
 	numbering=true
