@@ -121,7 +121,7 @@ FOREACH(element, StrLs, my_list)
 }
 ```
 
-`FOREACH(elem, vtype, v)`宏的第一个参数`elem`是迭代变量，用它来表示迭代过程中当前元素的值。第二个参数`vtype`是需要遍历的表的结构体名（与`DECL_VEC`的相应参数同）。第三个参数`v`是表的指针。
+`FOREACH(elem, vtype, v)`宏的第一个参数`elem`是迭代变量，用它来表示迭代过程中当前元素的值。第二个参数`vtype`是需要遍历的表的结构体名（与`DECL_DEF_VEC`的相应参数同）。第三个参数`v`是表的指针。
 
 最后，不要忘记释放表占用的内存。
 
