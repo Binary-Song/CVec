@@ -117,7 +117,7 @@ StrLs_push_back(my_list, (char*)"!");
 char* element;
 FOREACH(element, StrLs, my_list)
 {
-    printf("%s\n", element);
+    printf("%s ", element);
 }
 ```
 
