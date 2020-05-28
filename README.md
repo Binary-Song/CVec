@@ -1,51 +1,38 @@
-# CVec 文档
+# 1. 目录
 
-<!-- vscode-markdown-toc -->
+<!-- TOC -->autoauto- [1. 目录](#1-目录)auto- [2. <a name='CVec'></a>CVec](#2-a-namecvecacvec)auto- [3. <a name=''></a>使用速览](#3-a-namea使用速览)auto    - [3.1. <a name='DECL_VEC'></a>生成代码](#31-a-namedecl_veca生成代码)auto    - [3.2. <a name='-1'></a>调用接口](#32-a-name-1a调用接口)auto- [4. <a name='API'></a>API 参考](#4-a-nameapiaapi-参考)auto    - [4.1. DECL_VEC](#41-decl_vec)auto    - [4.2. DEF_VEC](#42-def_vec)auto    - [4.3. DECL_DEF_VEC](#43-decl_def_vec)auto    - [4.4. FOREACH](#44-foreach)auto    - [4.5. <a name='init'></a>init](#45-a-nameinitainit)auto    - [4.6. <a name='init_by_array'></a> init_by_array](#46-a-nameinit_by_arraya-init_by_array)auto    - [4.7. <a name='deinit'></a> deinit](#47-a-namedeinita-deinit)auto    - [4.8. <a name='push_back'></a> push_back](#48-a-namepush_backa-push_back)auto    - [4.9. <a name='get'></a> get](#49-a-namegeta-get)auto    - [4.10. <a name='erase'></a> erase](#410-a-nameerasea-erase)auto    - [4.11. <a name='erase_range'></a> erase_range](#411-a-nameerase_rangea-erase_range)auto    - [4.12. <a name='pop'></a> pop](#412-a-namepopa-pop)auto    - [4.13. <a name='begin'></a> begin](#413-a-namebegina-begin)auto    - [4.14. end](#414-end)autoauto<!-- /TOC -->
+# 2. <a name='CVec'></a>CVec
 
-- 1. [CVec](#CVec)
-- 2. [使用 CVec](#CVec-1)
-     - 2.1. [生成代码](#)
-     - 2.2. [调用接口](#-1)
-- 3. [API](#API)
-     - 3.1. [_vtype_\_init](#vtype_init)
-     - 3.2. [_vtype_\_init_by_array](#vtype_init_by_array)
-     - 3.3. [_vtype_\_deinit](#vtype_deinit)
-     - 3.4. [_vtype_\_push_back](#vtype_push_back)
-     - 3.5. [_vtype_\_get](#vtype_get)
-     - 3.6. [_vtype_\_erase](#vtype_erase)
-     - 3.7. [_vtype_\_erase_range](#vtype_erase_range)
-     - 3.8. [_vtype_\_pop](#vtype_pop)
-     - 3.9. [_vtype_\_begin](#vtype_begin)
-     - 3.10. [_vtype_\_end](#vtype_end)
-     - 3.11. [_vtype_\_next](#vtype_next)
-     - 3.12. [_vtype_\_prev](#vtype_prev)
-     - 3.13. [_vtype_\_deref](#vtype_deref)
-     - 3.14. [_vtype_\_eqi](#vtype_eqi) 
-     - 3.15. [FOREACH](#FOREACH)
+CVec 是一个 C 语言实现的线性列表容器，类似于 C++ 的 vector。它能在运行时改变容器大小，因此比数组更加灵活；它支持编译期的类型检查，因此比未模板化的数据结构更加安全。它还支持可开关的类型检查功能。
 
-<!-- vscode-markdown-toc-config
-	numbering=true
-	autoSave=true
-	/vscode-markdown-toc-config -->
-<!-- /vscode-markdown-toc -->
-
-## 1. <a name='CVec'></a>CVec
-
-CVec 是一个 C 语言实现的线性表容器。它能在运行时改变容器大小，因此比数组更加灵活；它支持编译期的类型检查，因此比未模板化的数据结构更加安全。
-
-## 2. <a name='CVec-1'></a>使用 CVec
+# 3. <a name=''></a>使用速览
 
 CVec 只包含一个文件：vec.h，使用时`#include`它即可。CVec 的基本原理是用宏生成结构体和函数的声明和定义。因此，您在使用 CVec 前要先调用宏来生成它们。
 
-### 2.1. <a name=''></a>生成代码
+## 3.1. <a name='DECL_VEC'></a>生成代码
 
-首先，用`DECL_VEC(vtype, type, prefix)`宏生成结构体和函数原型声明。`vtype`代表列表的结构体名称及相关函数名的开头部分，你可以取一个自己喜欢的名字（合法的 C 标识符）。`type`代表列表中存储的数据类型，比如`int`、`float`或者`char*`。建议不要在这里加上`const`限定符，否则编译器会报告 warning。`prefix`是所有生成出的函数的前缀。比如填写`static`将使所有生成出来的函数带上`static`前缀，从而使得它们具有内部链接。如果没有这方面的需求，可以留空此参数或用`EMPTY_PREF`占位。
+首先，用`DECL_VEC(vtype, type, prefix, rqc, rqd)`宏生成结构体和函数原型声明。
+
+`vtype`代表列表的结构体名称及相关函数名的开头部分，你可以取一个自己喜欢的名字（合法的 C 标识符）。
+
+`type`代表列表中存储的数据类型，比如`int`、`float`或者`char*`。建议不要在这里加上`const`限定符，否则编译器会报告 warning。
+
+`prefix`是所有生成出的函数的前缀。比如填写`static`将使所有生成出来的函数带上`static`前缀，从而使得它们具有内部链接。如果没有这方面的需求，可以留空此参数或用`EMPTY_PREFIX`占位。
+
+`rqc`的值只能是`0`或`1`。它表示列表中的元素是需要一个拷贝函数来完成拷贝呢，还是只需`=`运算符即可完成拷贝。`0`表示需要，`1`表示不需要。拷贝会在以下情况执行：
+
+- 用`push_back`向列表末尾添加元素时
+- 用`pop`弹出末尾元素时
+
+如果您想存储字符串（`char*`），您可能会想将它设置为`1`。
+
+`rqd`的值只能是`0`或`1`。它表示列表中的元素在被删除时是否需要特别的析构函数来处理。`0`表示需要，`1`表示不需要。如果您将`rqc`的值设置为`1`，这个值一般也应该是`1`。
 
 例如，这样可以生成一个存放`int`的列表的相关声明：
 
-`DECL_VEC(IntList, int, EMPTY_PREF)`
+`DECL_VEC(IntList, int, EMPTY_PREFIX ,0 ,0)`
 
-接下来，在`DECL_VEC`的后面调用`DEF_VEC(vtype, type, prefix)`宏来生成相关函数的定义。三个参数的含义与`DECL_VEC`相同，其中`vtype`和`type`应该与`DECL_VEC`保持一致。`prefix`则依旧根据你的需求填写。
+接下来，在`DECL_VEC`的后面调用`DECL_VEC(vtype, type, prefix, rqc, rqd)`宏来生成相关函数的定义。三个参数的含义与`DECL_VEC`相同，其中`vtype`和`type`应该与`DECL_VEC`保持一致。`prefix`则依旧根据你的需求填写。
 
 例如，生成刚才`IntList`列表的相关函数定义：
 
@@ -53,7 +40,7 @@ CVec 只包含一个文件：vec.h，使用时`#include`它即可。CVec 的基�
 
 可以将`DECL_VEC`放在头文件中，`DEF_VEC`放在源文件中以分离接口和实现。
 
-### 2.2. <a name='-1'></a>调用接口
+## 3.2. <a name='-1'></a>调用接口
 
 _用斜体书写的 `vtype` 和 `type` ，应该用 `DECL_VEC`和 `DEF_VEC`的对应实参替换。_
 
@@ -132,36 +119,144 @@ int main(void)
 }
 ```
 
-## 3. <a name='API'></a>API
+# 4. <a name='API'></a>API 参考
 
-_用斜体书写的 `vtype` 和 `type` ，应该用 `DECL_VEC`和 `DEF_VEC`的对应实参替换。_
 
-### 3.1. <a name='vtype_init'></a>_vtype_\_init
+## 4.1. DECL_VEC
 
-##### 简介：
+**简介**
+
+生成列表结构体的定义以及API函数原型声明。
+
+**宏**
+
+```
+DECL_VEC(vtype, type, prefix, rqc, rqd)
+```
+
+**参数**
+| 参数     | 描述                                                             |
+| -------- | ---------------------------------------------------------------- |
+| `vtype`  | 列表结构体的名字hi和所有API函数名的前缀                          |
+| `type`   | 列表存放的数据类型                                               |
+| `prefix` | 所有API函数声明的前缀                                            |
+| `rqc`    | 值为`0`或`1`，分别代表使用普通赋值的拷贝方式和使用自定义拷贝函数 |
+| `rqd`    | 值为`0`或`1`，分别代表不进行析构和使用自定义析构函数             |
+ 
+## 4.2. DEF_VEC
+
+**简介**
+
+生成API函数的定义。
+
+**宏**
+
+```
+DEF_VEC(vtype, type, prefix, rqc, rqd)
+```
+
+**参数**
+| 参数     | 描述                                                             |
+| -------- | ---------------------------------------------------------------- |
+| `vtype`  | 列表结构体的名字hi和所有API函数名的前缀                          |
+| `type`   | 列表存放的数据类型                                               |
+| `prefix` | 所有API函数声明的前缀                                            |
+| `rqc`    | 值为`0`或`1`，分别代表使用普通赋值的拷贝方式和使用自定义拷贝函数 |
+| `rqd`    | 值为`0`或`1`，分别代表不进行析构和使用自定义析构函数             |
+
+## 4.3. DECL_DEF_VEC
+
+**简介**
+
+用同样的参数调用`DECL_VEC`和`DEF_VEC`。
+
+**宏**
+
+```
+DECL_DEF_VEC(vtype, type, prefix, rqc, rqd)
+```
+
+**参数**
+| 参数     | 描述                                                             |
+| -------- | ---------------------------------------------------------------- |
+| `vtype`  | 列表结构体的名字hi和所有API函数名的前缀                          |
+| `type`   | 列表存放的数据类型                                               |
+| `prefix` | 所有API函数声明的前缀                                            |
+| `rqc`    | 值为`0`或`1`，分别代表使用普通赋值的拷贝方式和使用自定义拷贝函数 |
+| `rqd`    | 值为`0`或`1`，分别代表不进行析构和使用自定义析构函数             |
+
+**下面出现的 `vtype`、`type`、`rqc`和`rqd` 应该用 `DECL_VEC`和 `DEF_VEC`的对应实参替换。**
+
+
+## 4.4. FOREACH
+
+**简介**
+
+遍历列表。
+
+**宏**
+
+```
+FOREACH(elemi, vtype, vp)
+```
+
+**参数**
+
+| 参数  | 描述                                                 |
+| ----- | ---------------------------------------------------- |
+| elemi | 迭代变量，每次遍历赋给它当前元素的值（不调用`copy`） |
+| vtype | 列表的`vtype`                                        |
+| vp    | 指向列表的指针                                       |
+
+**提示**
+
+用 FOREACH 可以方便地遍历列表，具体可以参照 2.2. [调用接口](#-1) 中给出的例子。
+ 
+
+
+## 4.5. <a name='init'></a>init
+
+**简介**
 
 创建一个空列表。
 
-##### 函数签名：
+**函数签名**
 
-> _prefix_ _vtype_ \*_vtype_\_init(_vtype_\_copy*t copy, \_vtype*\_deinit_t deinit)
+根据`rqc`和`rqd`有以下变体： 
+```
+vtype *vtype_init()
+``` 
+```
+vtype *vtype_init(vtype_copy_t copy)
+``` 
+```
+vtype *vtype_init(vtype_deinit_t deinit)
+``` 
+```
+vtype *vtype_init(vtype_copy_t copy, vtype_deinit_t deinit)
+```
+**回调函数**
 
-##### 回调函数：
+```
+type (*vtype_copy_t)(type obj)
+```
 
-> _type_ (_vtype_\_copy*t)(\_type* obj)
+```
+void (*vtype_deinit_t)(type obj)
+```
 
-> void (_vtype_\_deinit*t)(\_type* obj)
+**参数**
 
-##### 参数：
+| 参数     | 描述                           |
+| -------- | ------------------------------ |
+| `copy`   | 用来拷贝`type`类型对象的函数。 |
+| `deinit` | 用来回收`type`类型对象的函数。 |
 
-| 参数   | 描述                                                                  |
-| ------ | --------------------------------------------------------------------- |
-| copy   | 用来拷贝*type*类型对象的回调函数。如果为 NULL，则使用默认的拷贝方式。 |
-| deinit | 用来回收*type*类型对象的回调函数。如果为 NULL，则使用默认的拷贝方式。 |
+**提示**
 
-##### 说明：
+如果`rqc`为`1`，会调用`copy`来拷贝。
 
-对于基本类型或只含有基本类型的结构体的，默认的拷贝方式已经够用。对于需要深拷贝的情况，则需要自定义拷贝函数。例如有一个存放`char*`的列表，每个元素都指向 C 风格字符串。如果希望每次添加元素都对元素进行深拷贝，可以定义如下函数作为 copy 的参数。
+对于基本类型或只含有基本类型的结构体的，默认的拷贝方式已经够用。对于需要深拷贝的情况，则需要自定义拷贝函数。例如有一个存放`char*`的列表，每个元素都指向 C 风格字符串。如果希望每次添加元素都对元素进行深拷贝，可以定义如下函数作为`copy`的参数。
 
 ```
 char* copy_cstr(char* src)
@@ -172,7 +267,7 @@ char* copy_cstr(char* src)
 }
 ```
 
-再定义以下函数作为 deinit 的参数。
+再定义以下函数作为`deinit`的参数。
 
 ```
 void free_cstr(char* str)
@@ -181,330 +276,252 @@ void free_cstr(char* str)
 }
 ```
 
-### 3.2. <a name='vtype_init_by_array'></a>_vtype_\_init_by_array
+## 4.6. <a name='init_by_array'></a> init_by_array
 
-##### 简介：
+**简介**
+
+创建列表，拷贝数组中的每一个元素到此列表中。
+
+**函数签名**
+
+根据`rqc`和`rqd`有以下变体：
+```
+vtype *vtype_init_by_array(const type *array, size_t count)
+```
+
+```
+vtype *vtype_init_by_array(const type *array, size_t count, vtype_copy_t copy)
+```
+
+```
+vtype *vtype_init_by_array(const type *array, size_t count, vtype_deinit_t deinit)
+```
+
+```
+vtype *vtype_init_by_array(const type *array, size_t count, vtype_copy_t copy, vtype_deinit_t deinit)
+```
+
+**回调函数**
+
+```
+type (*vtype_copy_t)(type obj)
+```
+
+```
+void (*vtype_deinit_t)(type obj)
+```
+
+**参数**
+
+| 参数     | 描述                                       |
+| -------- | ------------------------------------------ |
+| `array`  | 创建列表的依据。将会拷贝其中的每一个元素。 |
+| `count`  | 数组的元素个数。                           |
+| `copy`   | 用来拷贝`type`类型对象的函数。             |
+| `deinit` | 用来回收`type`类型对象的函数。             |
+
+**提示**
+
+如果`rqc`为`1`，会调用`copy`来拷贝。
+
+## 4.7. <a name='deinit'></a> deinit
+
+**简介**
 
 根据数组创建列表。
 
-##### 函数签名：
+**函数签名**
 
-> _prefix_ _vtype_ \*_vtype_\_init*by_array(const \_type* \*array, size*t count, \_vtype*\_copy*t copy, \_vtype*\_deinit_t deinit);
+```
+void vtype_deinit(vtype *v)
+```
 
-##### 回调函数：
-
-> _type_ (_vtype_\_copy*t)(\_type* obj)
-
-> void (_vtype_\_deinit*t)(\_type* obj)
-
-##### 参数：
-
-| 参数   | 描述                                                                  |
-| ------ | --------------------------------------------------------------------- |
-| array  | 创建列表的依据。将会拷贝其中的每一个元素。                            |
-| count  | 数组的元素个数。                                                      |
-| copy   | 用来拷贝*type*类型对象的回调函数。如果为 NULL，则使用默认的拷贝方式。 |
-| deinit | 用来回收*type*类型对象的回调函数。如果为 NULL，则使用默认的拷贝方式。 |
-
-##### 说明：
-
-创建列表，并拷贝数组中的每一个元素到此列表中。
-
-### 3.3. <a name='vtype_deinit'></a>_vtype_\_deinit
-
-##### 简介：
-
-根据数组创建列表。
-
-##### 函数签名：
-
-> _prefix_ void _vtype_\_deinit(_vtype_ \*v)
-
-##### 参数：
-
-| 参数 | 描述         |
-| ---- | ------------ |
-| v    | 列表的指针。 |
-
-##### 说明：
-
-销毁列表，对每一个元素调用 deinit 回调函数（NULL 则无动作）。
-
-### 3.4. <a name='vtype_push_back'></a>_vtype_\_push_back
-
-##### 简介：
-
-向列表尾部添加元素。
-
-##### 函数签名：
-
-> _prefix_ void vtype\*\_push_back(vtype \*v, type obj)
-
-##### 参数：
-
-| 参数 | 描述                                         |
-| ---- | -------------------------------------------- |
-| v    | 列表的指针。                                 |
-| obj  | 添加的元素。将用 copy 回调函数拷贝它再添加。 |
-
-##### 说明：
-
-向列表尾部添加元素，添加时用 copy 回调函数进行拷贝（NULL 则使用`=`直接赋值）。
-
-### 3.5. <a name='vtype_get'></a>_vtype_\_get
-
-##### 简介：
-
-取得元素。
-
-##### 函数签名：
-
-> _prefix_ _type_ _vtype_\_get(const _vtype_ \*v, size_t index);
-
-##### 参数：
-
-| 参数  | 描述                  |
-| ----- | --------------------- |
-| v     | 列表的指针。          |
-| index | 取第 index-1 个元素。 |
-
-##### 说明：
-
-返回列表中的第 index-1 个元素，不会调用 copy 回调函数。
-
-### 3.6. <a name='vtype_erase'></a>_vtype_\_erase
-
-##### 简介：
-
-删除元素。
-
-##### 函数签名：
-
-> _prefix_ _vtype_\_iter _vtype_\_erase(_vtype_ \*v, _vtype_\_iter i)
-
-##### 参数：
-
-| 参数 | 描述                     |
-| ---- | ------------------------ |
-| v    | 列表的指针。             |
-| i    | 指向被删除元素的迭代器。 |
-
-##### 返回值：
-
-指向被删除元素下一个元素的迭代器。如果被删除的元素在末尾，就返回尾后迭代器。
-
-##### 说明：
-
-删除迭代器指向的元素，调用 deinit 回调函数进行析构（NULL 则无动作）。
-
-### 3.7. <a name='vtype_erase_range'></a>_vtype_\_erase_range
-
-##### 简介：
-
-删除一些元素。
-
-##### 函数签名：
-
-> _prefix_ _vtype_\_iter _vtype_\_erase*range(\_vtype* \*v, _vtype_\_iter first, _vtype_\_iter last)
-
-##### 参数：
-
-| 参数  | 描述                                           |
-| ----- | ---------------------------------------------- |
-| first | 迭代器，指向被删除的第一个元素。               |
-| last  | 迭代器，指向被删除的最后一个元素的下一个元素。 |
-
-##### 返回值：
-
-指向被删除序列后一个元素的迭代器。
-
-##### 说明：
-
-删除前会调用 deinit 函数。
-
-### 3.8. <a name='vtype_pop'></a>_vtype_\_pop
-
-##### 简介：
-
-返回列表末尾的元素的副本并从列表中删除。
-
-##### 函数签名：
-
-> _prefix_ _type_ _vtype_\_pop(_vtype_ \*v)
-
-##### 参数：
-
-| 参数 | 描述           |
-| ---- | -------------- |
-| v    | 指向列表的指针 |
-
-##### 返回值：
-
-列表末尾的元素的副本。
-
-##### 说明：
-
-副本由调用 copy 而来。删除前会调用 deinit 函数。
-
-### 3.9. <a name='vtype_begin'></a>_vtype_\_begin
-
-##### 简介：
-
-取得指向第一个元素的迭代器。
-
-##### 函数签名：
-
-> _prefix_ _vtype_\_iter _vtype_\_begin(const _vtype_ \*v)
-
-##### 参数：
-
-| 参数 | 描述         |
-| ---- | ------------ |
-| v    | 列表的指针。 |
-
-##### 返回值：
-
-指向第一个元素的迭代器。
-
-### 3.10. <a name='vtype_end'></a>_vtype_\_end
-
-##### 简介：
-
-取得指向的前一个元素是列表最后一个元素的迭代器。
-
-##### 函数签名：
-
-> _prefix_ _vtype_\_iter _vtype_\_end(const _vtype_ \*v)
-
-##### 参数：
-
-| 参数 | 描述         |
-| ---- | ------------ |
-| v    | 列表的指针。 |
-
-##### 返回值：
-
-指向的前一个元素是列表最后一个元素的迭代器，即尾后迭代器。
-
-##### 说明：
-
-不要对此迭代器进行解引用操作，结果将是未定义的。
-
-### 3.11. <a name='vtype_next'></a>_vtype_\_next
-
-##### 简介：
-
-将迭代器后移一个元素。
-
-##### 函数签名：
-
-> _prefix_ _vtype_\_iter _vtype_\_next(_vtype_\_iter \*i)
-
-##### 参数：
-
-| 参数 | 描述               |
-| ---- | ------------------ |
-| i    | 指向迭代器的指针。 |
-
-##### 返回值：
-
-移动后的迭代器。
-
-##### 说明：
-
-不会进行边界检查。可以用`++i`代替。
-
-### 3.12. <a name='vtype_prev'></a>_vtype_\_prev
-
-##### 简介：
-
-将迭代器前移一个元素。
-
-##### 函数签名：
-
-> _prefix_ _vtype_\_iter _vtype_\_prev(_vtype_\_iter \*i)
-
-##### 参数：
-
-| 参数 | 描述               |
-| ---- | ------------------ |
-| i    | 指向迭代器的指针。 |
-
-##### 返回值：
-
-移动后的迭代器。
-
-##### 说明：
-
-不会进行边界检查。可以用`--i`代替。
-
-### 3.13. <a name='vtype_deref'></a>_vtype_\_deref
-
-##### 简介：
-
-解引用迭代器。
-
-##### 函数签名：
-
-> _prefix_ _type_\_iter _vtype_\_deref(_vtype_\_iter \*i)
-
-##### 参数：
-
-| 参数 | 描述     |
-| ---- | -------- |
-| i    | 迭代器。 |
-
-##### 返回值：
-
-迭代器指向的元素。
-
-##### 说明：
-
-不会调用 copy 回调函数，可以用作为右值的`*i`代替。
-
-### 3.14. <a name='vtype_eqi'></a>_vtype_\_eqi
-
-##### 简介：
-
-返回两个迭代器是否指向同一个元素。
-
-##### 函数签名：
-
-> _prefix_ int _vtype_\_eqi(_vtype_\_iter ia, _vtype_\_iter ib)
-
-##### 参数：
+**参数**
 
 | 参数 | 描述             |
 | ---- | ---------------- |
-| ia   | 要比较的迭代器。 |
-| ib   | 要比较的迭代器。 |
+| `v`  | 指向列表的指针。 |
 
-##### 返回值：
+**提示**
 
-迭代器是否指向同一个元素。否，返回 0；是，返回非零。
+如果`rqd`为`1`，会对每一个元素调用`deinit`。
 
-##### 说明：
+## 4.8. <a name='push_back'></a> push_back
 
-可以用`ia == ib`代替。
+**简介**
 
-### 3.15. <a name='FOREACH'></a>FOREACH
+向列表尾部添加元素。
 
-##### 简介：
+**函数签名**
 
-遍历列表。
+```
+void vtype_push_back(vtype *v, type obj)
+```
 
-##### 宏：
+**参数**
 
-> FOREACH(elemi, vtype, vp)
+| 参数  | 描述                                     |
+| ----- | ---------------------------------------- |
+| `v`   | 指向列表的指针。                         |
+| `obj` | 添加的元素。将用`copy`函数拷贝它再添加。 |
 
-##### 参数：
+**提示**
 
-| 参数  | 描述                                                           |
-| ----- | -------------------------------------------------------------- |
-| elemi | 迭代变量，每次遍历赋给它当前元素的值（不调用 copy 回调函数）。 |
-| vtype | 列表的*vtype*                                                  |
-| vp    | 指向列表的指针                                                 |
+如果`rqc`为`1`，会调用`copy`来拷贝。
 
-##### 说明：
+## 4.9. <a name='get'></a> get
 
-用 FOREACH 可以方便地遍历列表，具体可以参照 2.2. [调用接口](#-1) 中给出的例子。
+**简介**
+
+返回列表中的第 `index-1` 个元素。
+
+**函数签名**
+
+```
+type vtype_get(const vtype *v, size_t index);
+```
+
+**参数**
+
+| 参数    | 描述                    |
+| ------- | ----------------------- |
+| `v`     | 列表的指针。            |
+| `index` | 取第 `index`-1 个元素。 |
+ 
+**返回值**
+
+列表中的第 `index-1` 个元素。
+
+**提示**
+
+不会调用`copy`函数。
+
+## 4.10. <a name='erase'></a> erase
+
+**简介**
+
+从列表中删除指针指向的元素。
+
+**函数签名**
+
+```
+vtype_iter vtype_erase(vtype *v, vtype_iter i)
+```
+
+**参数**
+
+| 参数 | 描述                   |
+| ---- | ---------------------- |
+| `v`  | 列表的指针。           |
+| `i`  | 指向被删除元素的指针。 |
+
+**返回值**
+
+指向被删除元素下一个元素的指针。如果被删除的元素在末尾，就返回尾后指针。
+
+**提示**
+
+如果`rqd`为`1`，会对被删除元素调用`deinit`。
+
+## 4.11. <a name='erase_range'></a> erase_range
+
+**简介**
+
+从列表中删除连续的元素。
+
+**函数签名**
+
+```
+vtype_iter vtype_erase_range(vtype *v, vtype_iter first, vtype_iter last)
+```
+
+**参数**
+
+| 参数    | 描述                                       |
+| ------- | ------------------------------------------ |
+| `first` | 指针，指向被删除的第一个元素。             |
+| `last`  | 指针，指向被删除最后一个元素的下一个元素。 |
+
+**返回值**
+
+指向被删除的最后一个元素的后一个元素的指针。
+
+**提示**
+
+如果`rqd`为`1`，会对被删除元素调用`deinit`。
+
+## 4.12. <a name='pop'></a> pop
+
+**简介**
+
+返回列表末尾的元素的拷贝并从列表中删除此元素。
+
+**函数签名**
+
+```
+type vtype_pop(vtype *v)
+```
+
+**参数**
+
+| 参数 | 描述             |
+| ---- | ---------------- |
+| `v`  | 指向列表的指针。 |
+
+**返回值**
+
+列表末尾的元素的副本。
+
+**提示**
+
+如果`rqc`为`1`，会调用`copy`来拷贝。
+
+如果`rqd`为`1`，会对被删除元素调用`deinit`。
+
+## 4.13. <a name='begin'></a> begin
+
+**简介**
+
+取得指向第一个元素的指针。
+
+**函数签名**
+
+```
+vtype_iter vtype_begin(const vtype *v)
+```
+
+**参数**
+
+| 参数 | 描述             |
+| ---- | ---------------- |
+| `v`  | 指向列表的指针。 |
+
+**返回值**
+
+指向第一个元素的指针。
+
+## 4.14. end
+
+**简介**
+
+取得尾后指针。
+
+**函数签名**
+
+```
+vtype_iter vtype_end(const vtype *v)
+```
+**参数**
+
+| 参数 | 描述         |
+| ---- | ------------ |
+| `v`  | 列表的指针。 |
+
+**返回值**
+
+指向的列表最后一个元素后一个位置的指针，即尾后指针。
+
+**提示**
+
+不要对此指针进行解引用操作，结果将是未定义的。
+
