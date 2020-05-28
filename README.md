@@ -60,7 +60,7 @@ DECL_VEC(StrLs, char*, EMPTY_PREFIX ,1 ,1)
 ```
 DEF_VEC(StrLs, char*, EMPTY_PREFIX ,1 ,1)
 ```
-可以将`DECL_VEC`放在头文件中，`DEF_VEC`放在源文件中以分离接口和实现。也可以用`DECL_VEC(vtype, type, prefix, rqc, rqd)`来合并两个宏调用。
+可以将`DECL_VEC`放在头文件中，`DEF_VEC`放在源文件中以分离接口和实现。也可以用`DECL_DEF_VEC(vtype, type, prefix, rqc, rqd)`来合并两个宏调用。
 
 ## 调用接口
 
