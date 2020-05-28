@@ -11,9 +11,10 @@
 
 #define INITIAL_CAPACITY 5 //列表初始容量
 #define GROWTH_RATE 2      //列表容量增长倍率
-#define BOUND_CHECK 1      //是否检查边界
+#define BOUND_CHECK 0      //是否检查边界
 
-/* 配置结束 */
+/* end of 配置 */
+
 #define DECL_DEF_VEC(vtype, type, prefix, rqc, rqd) \
     DECL_VEC(vtype, type, prefix, rqc, rqd)         \
     DEF_VEC(vtype, type, prefix, rqc, rqd)
@@ -191,7 +192,7 @@
             p = p - v->array + new_mem;                                                                               \
             v->array = new_mem;                                                                                       \
         }                                                                                                             \
-        memmove(p + 1, p, (vtype##_end(v) - (p)) * sizeof(type));                                                 \
+        memmove(p + 1, p, (vtype##_end(v) - (p)) * sizeof(type));                                                     \
         *p = COPY##rqc(v->copy, obj);                                                                                 \
         v->size++;                                                                                                    \
         return p;                                                                                                     \
