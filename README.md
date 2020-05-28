@@ -65,8 +65,8 @@ DEF_VEC(StrLs, char*, EMPTY_PREFIX ,1 ,1)
 所有的API函数都以`vtype`开头。刚才我们已经用
 
 ```
-DECL_VEC(IntList, int, EMPTY_PREFIX ,1 ,1)
-DECL_DEF_VEC(IntList, int, EMPTY_PREFIX ,1 ,1)
+DECL_VEC(StrLs, char*, EMPTY_PREFIX ,1 ,1)
+DEF_VEC(StrLs, char*, EMPTY_PREFIX ,1 ,1)
 ```
 
 生成了`StrLs`相关代码，现在可以用生成出的`StrLs_init`函数创建一个列表。但在此之前，我们需要编写拷贝和析构`char*`的函数，因为我们之前将`rqc`和`rqd`都指定为`1`了。
@@ -174,7 +174,7 @@ void deinit_str(char* str)
 
 # 配置
 
-CVec可以通过以下宏定义进行配置。可以在vec.h的前部找到它们并按需修改。
+CVec可以通过以下宏进行配置。可以在vec.h的前部找到它们并按需修改。
 
 | 宏                 | 描述             | 合法值域 | 默认值 |
 | ------------------ | ---------------- | -------- | ------ |
