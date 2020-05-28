@@ -21,6 +21,7 @@
   - [erase](#erase)
   - [erase_range](#erase_range)
   - [pop](#pop)
+
 # CVec
 
 CVec是一个C语言实现的线性列表容器，类似于C++的 vector。它能在运行时改变容器大小，因此比数组更加灵活；它支持编译期的类型检查，因此比未模板化的数据结构更加安全。此外，它还支持可开关的类型检查功能。
@@ -508,6 +509,7 @@ type vtype_get(const vtype *v, size_t index);
 
 不会调用`copy`函数。
 
+
 ## erase
 
 **简介**
@@ -534,6 +536,7 @@ vtype_iter vtype_erase(vtype *v, vtype_iter i)
 **提示**
 
 如果`rqd`为`1`，会对被删除元素调用`deinit`。
+
 
 ## erase_range
 
@@ -562,6 +565,7 @@ vtype_iter vtype_erase_range(vtype *v, vtype_iter first, vtype_iter last)
 
 如果`rqd`为`1`，会对被删除元素调用`deinit`。
 
+
 ## pop
 
 **简介**
@@ -589,4 +593,3 @@ type vtype_pop(vtype *v)
 如果`rqc`为`1`，会调用`copy`来拷贝。
 
 如果`rqd`为`1`，会对被删除元素调用`deinit`。
-
