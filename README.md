@@ -1,15 +1,19 @@
+
+
+
 # 1. 目录
 
-<!-- TOC -->autoauto- [1. 目录](#1-目录)auto- [2. <a name='CVec'></a>CVec](#2-a-namecvecacvec)auto- [3. <a name=''></a>使用速览](#3-a-namea使用速览)auto    - [3.1. <a name='DECL_VEC'></a>生成代码](#31-a-namedecl_veca生成代码)auto    - [3.2. <a name='-1'></a>调用接口](#32-a-name-1a调用接口)auto- [4. <a name='API'></a>API 参考](#4-a-nameapiaapi-参考)auto    - [4.1. DECL_VEC](#41-decl_vec)auto    - [4.2. DEF_VEC](#42-def_vec)auto    - [4.3. DECL_DEF_VEC](#43-decl_def_vec)auto    - [4.4. FOREACH](#44-foreach)auto    - [4.5. <a name='init'></a>init](#45-a-nameinitainit)auto    - [4.6. <a name='init_by_array'></a> init_by_array](#46-a-nameinit_by_arraya-init_by_array)auto    - [4.7. <a name='deinit'></a> deinit](#47-a-namedeinita-deinit)auto    - [4.8. <a name='push_back'></a> push_back](#48-a-namepush_backa-push_back)auto    - [4.9. <a name='get'></a> get](#49-a-namegeta-get)auto    - [4.10. <a name='erase'></a> erase](#410-a-nameerasea-erase)auto    - [4.11. <a name='erase_range'></a> erase_range](#411-a-nameerase_rangea-erase_range)auto    - [4.12. <a name='pop'></a> pop](#412-a-namepopa-pop)auto    - [4.13. <a name='begin'></a> begin](#413-a-namebegina-begin)auto    - [4.14. end](#414-end)autoauto<!-- /TOC -->
-# 2. <a name='CVec'></a>CVec
+[[TOC]]
+
+# 2. CVec
 
 CVec 是一个 C 语言实现的线性列表容器，类似于 C++ 的 vector。它能在运行时改变容器大小，因此比数组更加灵活；它支持编译期的类型检查，因此比未模板化的数据结构更加安全。它还支持可开关的类型检查功能。
 
-# 3. <a name=''></a>使用速览
+# 3. 使用速览
 
 CVec 只包含一个文件：vec.h，使用时`#include`它即可。CVec 的基本原理是用宏生成结构体和函数的声明和定义。因此，您在使用 CVec 前要先调用宏来生成它们。
 
-## 3.1. <a name='DECL_VEC'></a>生成代码
+## 3.1. 生成代码
 
 首先，用`DECL_VEC(vtype, type, prefix, rqc, rqd)`宏生成结构体和函数原型声明。
 
@@ -40,7 +44,7 @@ CVec 只包含一个文件：vec.h，使用时`#include`它即可。CVec 的基�
 
 可以将`DECL_VEC`放在头文件中，`DEF_VEC`放在源文件中以分离接口和实现。
 
-## 3.2. <a name='-1'></a>调用接口
+## 3.2. 调用接口
 
 _用斜体书写的 `vtype` 和 `type` ，应该用 `DECL_VEC`和 `DEF_VEC`的对应实参替换。_
 
@@ -119,7 +123,7 @@ int main(void)
 }
 ```
 
-# 4. <a name='API'></a>API 参考
+# 4. API 参考
 
 
 ## 4.1. DECL_VEC
@@ -214,7 +218,7 @@ FOREACH(elemi, vtype, vp)
  
 
 
-## 4.5. <a name='init'></a>init
+## 4.5. init
 
 **简介**
 
@@ -276,7 +280,7 @@ void free_cstr(char* str)
 }
 ```
 
-## 4.6. <a name='init_by_array'></a> init_by_array
+## 4.6.  init_by_array
 
 **简介**
 
@@ -324,7 +328,7 @@ void (*vtype_deinit_t)(type obj)
 
 如果`rqc`为`1`，会调用`copy`来拷贝。
 
-## 4.7. <a name='deinit'></a> deinit
+## 4.7.  deinit
 
 **简介**
 
@@ -346,7 +350,7 @@ void vtype_deinit(vtype *v)
 
 如果`rqd`为`1`，会对每一个元素调用`deinit`。
 
-## 4.8. <a name='push_back'></a> push_back
+## 4.8.  push_back
 
 **简介**
 
@@ -369,7 +373,7 @@ void vtype_push_back(vtype *v, type obj)
 
 如果`rqc`为`1`，会调用`copy`来拷贝。
 
-## 4.9. <a name='get'></a> get
+## 4.9.  get
 
 **简介**
 
@@ -396,7 +400,7 @@ type vtype_get(const vtype *v, size_t index);
 
 不会调用`copy`函数。
 
-## 4.10. <a name='erase'></a> erase
+## 4.10.  erase
 
 **简介**
 
@@ -423,7 +427,7 @@ vtype_iter vtype_erase(vtype *v, vtype_iter i)
 
 如果`rqd`为`1`，会对被删除元素调用`deinit`。
 
-## 4.11. <a name='erase_range'></a> erase_range
+## 4.11.  erase_range
 
 **简介**
 
@@ -450,7 +454,7 @@ vtype_iter vtype_erase_range(vtype *v, vtype_iter first, vtype_iter last)
 
 如果`rqd`为`1`，会对被删除元素调用`deinit`。
 
-## 4.12. <a name='pop'></a> pop
+## 4.12.  pop
 
 **简介**
 
@@ -478,7 +482,7 @@ type vtype_pop(vtype *v)
 
 如果`rqd`为`1`，会对被删除元素调用`deinit`。
 
-## 4.13. <a name='begin'></a> begin
+## 4.13.  begin
 
 **简介**
 
