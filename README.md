@@ -20,7 +20,7 @@
   - [get](#get)
   - [erase](#erase)
   - [erase_range](#erase_range)
-  - [pop](#pop)
+  - [pop_back](#pop_back)
 
 # CVec
 
@@ -44,7 +44,7 @@ CVec只包含一个文件：vec.h，使用时`#include`它即可。CVec的基本
 
 - 用`push_back`向列表末尾添加元素时
 - 用`insert`向列表插入元素时
-- 用`pop`弹出末尾元素时
+- 用`pop_back`弹出末尾元素时
 
 如果您想存储字符串（`char*`），您可能会想将它设置为`1`。
 
@@ -566,7 +566,7 @@ vtype_iter vtype_erase_range(vtype *v, vtype_iter first, vtype_iter last)
 如果`rqd`为`1`，会对被删除元素调用`deinit`。
 
 
-## pop
+## pop_back
 
 **简介**
 
@@ -575,7 +575,7 @@ vtype_iter vtype_erase_range(vtype *v, vtype_iter first, vtype_iter last)
 **函数签名**
 
 ```
-type vtype_pop(vtype *v)
+type vtype_pop_back(vtype *v)
 ```
 
 **参数**

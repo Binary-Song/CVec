@@ -46,7 +46,8 @@
     prefix type vtype##_get(const vtype *v, size_t index);                                                              \
     prefix vtype##_iter vtype##_erase(vtype *v, vtype##_iter i);                                                        \
     prefix vtype##_iter vtype##_erase_range(vtype *v, vtype##_iter first, vtype##_iter last);                           \
-    prefix vtype##_iter vtype##_insert(vtype *v, vtype##_iter pos, type obj);
+    prefix vtype##_iter vtype##_insert(vtype *v, vtype##_iter pos, type obj);                                           \
+    prefix type vtype##_pop_back(vtype *v);
 /*rqc = Requrie Copy Func*/
 /*rqd = Require Deinit Func*/
 #define DEF_VEC(vtype, type, prefix, rqc, rqd)                                                                        \
@@ -162,8 +163,8 @@
         v->size -= last - first;                                                                                      \
         return first;                                                                                                 \
     }                                                                                                                 \
-    /* pop 删除最后的元素，复制一份返回*/                                                               \
-    prefix type vtype##_pop(vtype *v)                                                                                 \
+    /* pop_back 删除最后的元素，复制一份返回*/                                                               \
+    prefix type vtype##_pop_back(vtype *v)                                                                                 \
     {                                                                                                                 \
         CHK_SIZE(v, BOUND_CHECK);                                                                                     \
         type *p = vtype##_end(v) - 1;                                                                                 \
