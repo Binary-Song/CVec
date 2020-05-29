@@ -100,7 +100,7 @@
         v->array = malloc(sizeof(type) * v->capacity);                                                                \
         for (size_t i = 0; i < size; ++i)                                                                             \
         {                                                                                                             \
-            v->array[i] = COPY##rqc(v->copy, (type)array[i]);                                                         \
+            v->array[i] = COPY(v->copy, (type)array[i], rqc);                                                         \
         }                                                                                                             \
         return v;                                                                                                     \
     }                                                                                                                 \
@@ -109,7 +109,7 @@
     {                                                                                                                 \
         for (size_t i = 0; i < v->size; ++i)                                                                          \
         {                                                                                                             \
-            DEINIT##rqd(v->deinit, v->array[i]);                                                                      \
+            DEINIT(v->deinit, v->array[i], rqd);                                                                      \
         }                                                                                                             \
         free(v->array);                                                                                               \
         free(v);                                                                                                      \
@@ -119,7 +119,7 @@
     {                                                                                                                 \
         if (v->size < v->capacity)                                                                                    \
         {                                                                                                             \
-            v->array[v->size] = COPY##rqc(v->copy, obj);                                                              \
+            v->array[v->size] = COPY(v->copy, obj, rqc);                                                              \
         }                                                                                                             \
         else                                                                                                          \
         { /*大小不够，数据搬家*/                                                                             \
@@ -128,29 +128,27 @@
             memcpy(new_mem, v->array, sizeof(type) * v->size);                                                        \
             for (size_t i = 0; i < v->size; ++i)                                                                      \
             {                                                                                                         \
-                DEINIT##rqd(v->deinit, v->array[i]);                                                                  \
+                DEINIT(v->deinit, v->array[i], rqd);                                                                  \
             }                                                                                                         \
             free(v->array);                                                                                           \
             v->array = new_mem;                                                                                       \
-            v->array[v->size] = COPY##rqc(v->copy, obj);                                                              \
+            v->array[v->size] = COPY(v->copy, obj, rqc);                                                              \
         }                                                                                                             \
         v->size++;                                                                                                    \
     }                                                                                                                 \
     /* get 取得元素*/                                                                                             \
     prefix type vtype##_get(const vtype *v, size_t index)                                                             \
     {                                                                                                                 \
-        CONCAT(CHK_IDX, BOUND_CHECK)                                                                                  \
-        (v, index);                                                                                                   \
+        CHK_IDX(v, index, BOUND_CHECK);                                                                               \
         return v->array[index];                                                                                       \
     }                                                                                                                 \
     /* erase 删除元素 */                                                                                          \
     prefix vtype##_iter vtype##_erase(vtype *v, vtype##_iter i)                                                       \
     {                                                                                                                 \
-        CONCAT(CHK_PTR, BOUND_CHECK)                                                                                  \
-        (vtype, type, v, i);                                                                                          \
+        CHK_PTR(vtype, type, v, i, BOUND_CHECK);                                                                      \
         type *p = i;                                                                                                  \
         type *ep = vtype##_end(v);                                                                                    \
-        DEINIT##rqd(v->deinit, *p);                                                                                   \
+        DEINIT(v->deinit, *p, rqd);                                                                                   \
         memmove(p, p + 1, (ep - (p + 1)) * sizeof(type));                                                             \
         v->size--;                                                                                                    \
         return i;                                                                                                     \
@@ -158,10 +156,8 @@
     /* erase_range 删除一些元素*/                                                                               \
     prefix vtype##_iter vtype##_erase_range(vtype *v, vtype##_iter first, vtype##_iter last)                          \
     {                                                                                                                 \
-        CONCAT(CHK_PTR, BOUND_CHECK)                                                                                  \
-        (vtype, type, v, first);                                                                                      \
-        CONCAT(CHK_PTR, BOUND_CHECK)                                                                                  \
-        (vtype, type, v, last - 1);                                                                                   \
+        CHK_PTR(vtype, type, v, first, BOUND_CHECK);                                                                  \
+        CHK_PTR(vtype, type, v, last - 1, BOUND_CHECK);                                                               \
         memmove(first, last, (vtype##_end(v) - last) * sizeof(type));                                                 \
         v->size -= last - first;                                                                                      \
         return first;                                                                                                 \
@@ -169,20 +165,18 @@
     /* pop 删除最后的元素，复制一份返回*/                                                               \
     prefix type vtype##_pop(vtype *v)                                                                                 \
     {                                                                                                                 \
-        CONCAT(CHK_SIZE, BOUND_CHECK)                                                                                 \
-        (v);                                                                                                          \
+        CHK_SIZE(v, BOUND_CHECK);                                                                                     \
         type *p = vtype##_end(v) - 1;                                                                                 \
-        type copied = COPY##rqc(v->copy, *p);                                                                         \
-        DEINIT##rqd(v->deinit, *p);                                                                                   \
+        type copied = COPY(v->copy, *p, rqc);                                                                         \
+        DEINIT(v->deinit, *p, rqd);                                                                                   \
         v->size--;                                                                                                    \
         return copied;                                                                                                \
     }                                                                                                                 \
     /* insert 插入元素*/                                                                                          \
     prefix vtype##_iter vtype##_insert(vtype *v, vtype##_iter p, type obj)                                            \
     {                                                                                                                 \
-        CONCAT(CHK_PTR, BOUND_CHECK)                                                                                  \
-        (vtype, type, v, p);                                                                                          \
-        DEINIT##rqd(v->deinit, *p);                                                                                   \
+        CHK_PTR(vtype, type, v, p, BOUND_CHECK);                                                                      \
+        DEINIT(v->deinit, *p, rqd);                                                                                   \
         if (v->size >= v->capacity)                                                                                   \
         { /*大小不够，数据搬家*/                                                                             \
             v->capacity *= GROWTH_RATE;                                                                               \
@@ -193,7 +187,7 @@
             v->array = new_mem;                                                                                       \
         }                                                                                                             \
         memmove(p + 1, p, (vtype##_end(v) - (p)) * sizeof(type));                                                     \
-        *p = COPY##rqc(v->copy, obj);                                                                                 \
+        *p = COPY(v->copy, obj, rqc);                                                                                 \
         v->size++;                                                                                                    \
         return p;                                                                                                     \
     }
@@ -209,23 +203,36 @@
 
 */
 #define CONCAT(a, b) DOUBLE_HASHTAG(a, b)
+#define CONCAT3(a, b, c) QUADRUPLE_HASHTAG(a, b, c)
+
 #define DOUBLE_HASHTAG(a, b) a##b
+#define QUADRUPLE_HASHTAG (a, b, c) a##b##c
 
 /*
     以下：末尾数字为 BOUND_CHECK 的值。决定是否检查边界。
     0:yes 1:no
     对于不同的情况分为检查指针、检查下标和检查size
 */
+#define CHK_IDX(v, index, bnd_chk) \
+    CONCAT(CHK_IDX, bnd_chk)       \
+    (v, index)
+
 #define CHK_IDX0(v, index)
 #define CHK_IDX1(v, index)             \
     if (index >= v->size || index < 0) \
     OUT_OF_BOUND_ERROR
 
+#define CHK_PTR(vtype, type, v, i, bnd_chk) \
+    CONCAT(CHK_PTR, bnd_chk)                \
+    (vtype, type, v, i)
 #define CHK_PTR0(vtype, type, v, i)
 #define CHK_PTR1(vtype, type, v, i)                  \
     if (i >= vtype##_end(v) || i < vtype##_begin(v)) \
     OUT_OF_BOUND_ERROR
 
+#define CHK_SIZE(v, bnd_chk)  \
+    CONCAT(CHK_SIZE, bnd_chk) \
+    (v)
 #define CHK_SIZE0(v)
 #define CHK_SIZE1(v)  \
     if (v->size <= 0) \
@@ -240,12 +247,18 @@
     以下：末尾数字为宏参数 rqc 的值。决定拷贝的方式。
     0:直接赋值 1:调用copy函数 
 */
+#define COPY(cp_func, obj, rqc) \
+    CONCAT(COPY, rqc)           \
+    (cp_func, obj)
 #define COPY0(cp_func, obj) obj
 #define COPY1(cp_func, obj) cp_func(obj)
 /*
     以下：末尾数字为宏参数 rqd 的值。决定是否 deinit。
     0:无动作 1:调用deinit函数
 */
+#define DEINIT(de_func, obj, rqd) \
+    CONCAT(DEINIT, rqd)           \
+    (de_func, obj)
 #define DEINIT0(de_func, obj)
 #define DEINIT1(de_func, obj) de_func(obj)
 /*
