@@ -203,10 +203,9 @@
 
 */
 #define CONCAT(a, b) DOUBLE_HASHTAG(a, b)
-#define CONCAT3(a, b, c) QUADRUPLE_HASHTAG(a, b, c)
+#define CONCAT3(a, b, c) CONCAT(CONCAT(a, b),c)
 
 #define DOUBLE_HASHTAG(a, b) a##b
-#define QUADRUPLE_HASHTAG (a, b, c) a##b##c
 
 /*
     以下：末尾数字为 BOUND_CHECK 的值。决定是否检查边界。
@@ -267,30 +266,33 @@
     rqc : require copy func
     rqd : require deinit func
 */
-#define INIT_PARAM_LIST(vtype, rqc, rqd) INIT_PARAM_LIST_##rqc##_##rqd(vtype)
-#define INIT_PARAM_LIST_0_0(vtype) void
-#define INIT_PARAM_LIST_0_1(vtype) vtype##_copy_t copy
-#define INIT_PARAM_LIST_1_0(vtype) vtype##_deinit_t deinit
-#define INIT_PARAM_LIST_1_1(vtype) vtype##_copy_t copy, vtype##_deinit_t deinit
+#define INIT_PARAM_LIST(vtype, rqc, rqd) \
+    CONCAT3(INIT_PARAM_LIST, rqc, rqd)   \
+    (vtype)
+#define INIT_PARAM_LIST00(vtype) void
+#define INIT_PARAM_LIST01(vtype) vtype##_copy_t copy
+#define INIT_PARAM_LIST10(vtype) vtype##_deinit_t deinit
+#define INIT_PARAM_LIST11(vtype) vtype##_copy_t copy, vtype##_deinit_t deinit
 /*
     INIT_ASSIGN_FP: init 函数初始化 copy 和 deinit 函数指针的代码。
 */
-#define INIT_ASSIGN_FP(rqc, rqd) INIT_ASSIGN_FP_##rqc##_##rqd
-#define INIT_ASSIGN_FP_0_0
-#define INIT_ASSIGN_FP_0_1 v->deinit = deinit;
-#define INIT_ASSIGN_FP_1_0 v->copy = copy;
-#define INIT_ASSIGN_FP_1_1 \
-    v->deinit = deinit;    \
+#define INIT_ASSIGN_FP(rqc, rqd) CONCAT3(INIT_ASSIGN_FP, rqc, rqd)
+#define INIT_ASSIGN_FP00
+#define INIT_ASSIGN_FP01 v->deinit = deinit;
+#define INIT_ASSIGN_FP10 v->copy = copy;
+#define INIT_ASSIGN_FP11 \
+    v->deinit = deinit;  \
     v->copy = copy;
 /*
     STRUCT_FP_DEF : vec 结构体中函数指针的定义
 */
-#define STRUCT_FP_DEF(vtype, rqc, rqd) STRUCT_FP_DEF_##rqc##_##rqd(vtype)
-#define STRUCT_FP_DEF_0_0(vtype)
-#define STRUCT_FP_DEF_0_1(vtype) vtype##_deinit_t deinit;
-#define STRUCT_FP_DEF_1_0(vtype) vtype##_copy_t copy;
-#define STRUCT_FP_DEF_1_1(vtype) \
-    vtype##_copy_t copy;         \
+#define STRUCT_FP_DEF(vtype, rqc, rqd) CONCAT3(STRUCT_FP_DEF, rqc, rqd) \
+(vtype)
+#define STRUCT_FP_DEF00(vtype)
+#define STRUCT_FP_DEF01(vtype) vtype##_deinit_t deinit;
+#define STRUCT_FP_DEF10(vtype) vtype##_copy_t copy;
+#define STRUCT_FP_DEF11(vtype) \
+    vtype##_copy_t copy;       \
     vtype##_deinit_t deinit;
 
 #endif
