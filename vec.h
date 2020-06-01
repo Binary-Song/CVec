@@ -275,8 +275,8 @@
     CONCAT3(INIT_PARAM_LIST, rqc, rqd)   \
     (vtype)
 #define INIT_PARAM_LIST00(vtype) void
-#define INIT_PARAM_LIST01(vtype) vtype##_copy_t copy
-#define INIT_PARAM_LIST10(vtype) vtype##_deinit_t deinit
+#define INIT_PARAM_LIST01(vtype) vtype##_deinit_t deinit
+#define INIT_PARAM_LIST10(vtype) vtype##_copy_t copy
 #define INIT_PARAM_LIST11(vtype) vtype##_copy_t copy, vtype##_deinit_t deinit
 /*
     INIT_ASSIGN_FP: init 函数初始化 copy 和 deinit 函数指针的代码。
