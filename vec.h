@@ -44,7 +44,7 @@
     prefix int vtype##_eqi(vtype##_iter ia, vtype##_iter ib);                                                     \
     /*vector相关*/                                                                                              \
     prefix vtype *vtype##_init(INIT_PARAM_LIST(vtype, rqc, rqd));                                                 \
-    prefix vtype *vtype##_init_by_array(type *array, size_t count, vtype##_copy_t copy, vtype##_deinit_t deinit); \
+    prefix vtype *vtype##_init_by_array(type *array, size_t count,INIT_PARAM_LIST(vtype, rqc, rqd)); \
     prefix void vtype##_deinit(vtype *v);                                                                         \
     prefix void vtype##_push_back(vtype *v, type obj);                                                            \
     prefix type vtype##_get(const vtype *v, size_t index);                                                        \
@@ -96,7 +96,7 @@
         return v;                                                                                               \
     }                                                                                                           \
     /* init_by_array 从数组创建vector*/                                                                    \
-    prefix vtype *vtype##_init_by_array(type *array, size_t size, vtype##_copy_t copy, vtype##_deinit_t deinit) \
+    prefix vtype *vtype##_init_by_array(type *array, size_t size, INIT_PARAM_LIST(vtype, rqc, rqd)) \
     {                                                                                                           \
         vtype *v = malloc(sizeof(vtype));                                                                       \
         INIT_ASSIGN_FP(rqc, rqd)                                                                                \
@@ -274,7 +274,7 @@
 #define INIT_PARAM_LIST(vtype, rqc, rqd) \
     CONCAT3(INIT_PARAM_LIST, rqc, rqd)   \
     (vtype)
-#define INIT_PARAM_LIST00(vtype) void
+#define INIT_PARAM_LIST00(vtype) 
 #define INIT_PARAM_LIST01(vtype) vtype##_deinit_t deinit
 #define INIT_PARAM_LIST10(vtype) vtype##_copy_t copy
 #define INIT_PARAM_LIST11(vtype) vtype##_copy_t copy, vtype##_deinit_t deinit
