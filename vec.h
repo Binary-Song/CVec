@@ -1,11 +1,16 @@
 #ifndef VEC_H
 #define VEC_H
-
+ 
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 
 #define EMPTY_PREFIX
+
+#ifndef NDEBUG  // DEBUG 
+
+#define BOUND_CHECK 1
+#endif
 
 /* 配置 */
 #ifndef INITIAL_CAPACITY
@@ -48,7 +53,7 @@
     prefix void vtype##_deinit(vtype *v);                                                             \
     prefix void vtype##_push_back(vtype *v, type obj);                                                \
     prefix type vtype##_get(const vtype *v, size_t index);                                            \
-    prefix vtype##_iter vtype##_erase(vtype *v, vtype##_iter i);                                      \
+    prefix vtype##_iter vtype##_erase(vtype *v, size_t i);                                      \
     prefix vtype##_iter vtype##_erase_range(vtype *v, vtype##_iter first, vtype##_iter last);         \
     prefix vtype##_iter vtype##_insert(vtype *v, vtype##_iter pos, type obj);                         \
     prefix type vtype##_pop_back(vtype *v);
@@ -105,7 +110,7 @@
         v->array = malloc(sizeof(type) * v->capacity);                                              \
         for (size_t i = 0; i < size; ++i)                                                           \
         {                                                                                           \
-            v->array[i] = COPY(v->copy, (type)array[i], rqc);                                       \
+            v->array[i] = COPY(v->copy, array[i], rqc);                                       \
         }                                                                                           \
         return v;                                                                                   \
     }                                                                                               \
@@ -131,10 +136,6 @@
             v->capacity *= GROWTH_RATE;                                                             \
             type *new_mem = malloc(sizeof(type) * v->capacity);                                     \
             memcpy(new_mem, v->array, sizeof(type) * v->size);                                      \
-            for (size_t i = 0; i < v->size; ++i)                                                    \
-            {                                                                                       \
-                DEINIT(v->deinit, v->array[i], rqd);                                                \
-            }                                                                                       \
             free(v->array);                                                                         \
             v->array = new_mem;                                                                     \
             v->array[v->size] = COPY(v->copy, obj, rqc);                                            \
@@ -148,15 +149,15 @@
         return v->array[index];                                                                     \
     }                                                                                               \
     /* erase 删除元素 */                                                                        \
-    prefix vtype##_iter vtype##_erase(vtype *v, vtype##_iter i)                                     \
+    prefix vtype##_iter vtype##_erase(vtype *v, size_t index)                                     \
     {                                                                                               \
-        CHK_PTR(vtype, type, v, i, BOUND_CHECK);                                                    \
-        type *p = i;                                                                                \
+        CHK_IDX(v, index, BOUND_CHECK);                                                    \
+        type *p = v->array + index;                                                                                \
         type *ep = vtype##_end(v);                                                                  \
         DEINIT(v->deinit, *p, rqd);                                                                 \
         memmove(p, p + 1, (ep - (p + 1)) * sizeof(type));                                           \
         v->size--;                                                                                  \
-        return i;                                                                                   \
+        return v->array + index;                                                                                   \
     }                                                                                               \
     /* erase_range 删除一些元素*/                                                             \
     prefix vtype##_iter vtype##_erase_range(vtype *v, vtype##_iter first, vtype##_iter last)        \
@@ -176,7 +177,7 @@
         DEINIT(v->deinit, *p, rqd);                                                                 \
         v->size--;                                                                                  \
         return copied;                                                                              \
-    }                                                                                               \
+    }                                                                                                \
     /* insert 插入元素*/                                                                        \
     prefix vtype##_iter vtype##_insert(vtype *v, vtype##_iter p, type obj)                          \
     {                                                                                               \
